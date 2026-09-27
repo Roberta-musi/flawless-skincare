@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 const control =
-  "w-full rounded-xl border border-line bg-white px-4 text-[15px] text-plum placeholder:text-muted/60 transition-colors duration-200 hover:border-plum/30 focus:border-fuchsia focus:outline-none focus:ring-3 focus:ring-fuchsia/10 aria-invalid:border-danger aria-invalid:ring-danger/10 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-xl border border-line bg-white px-4 text-base text-plum placeholder:text-muted/60 transition-colors duration-200 hover:border-plum/30 focus:border-fuchsia focus:outline-none focus:ring-3 focus:ring-fuchsia/10 aria-invalid:border-danger aria-invalid:ring-danger/10 disabled:cursor-not-allowed disabled:opacity-60";
 
 export function Label({ className, ...props }: ComponentProps<"label">) {
   return <label className={cn("text-[13px] font-medium text-plum", className)} {...props} />;

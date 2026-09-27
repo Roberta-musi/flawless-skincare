@@ -138,7 +138,7 @@ export function BagDrawer({ locale, whatsappNumber, dict }: { locale: Locale; wh
                 <Label htmlFor="bag-name" className="text-xs">
                   {dict.bag.name} <span className="font-normal text-muted">· {dict.common.optional}</span>
                 </Label>
-                <Input id="bag-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className="h-10 text-sm" />
+                <Input id="bag-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className="h-11" />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="bag-town" className="text-xs">
@@ -150,7 +150,7 @@ export function BagDrawer({ locale, whatsappNumber, dict }: { locale: Locale; wh
                   onChange={(e) => setTown(e.target.value)}
                   placeholder={dict.bag.townPlaceholder}
                   autoComplete="address-level2"
-                  className="h-10 text-sm"
+                  className="h-11"
                 />
               </div>
             </div>

@@ -13,7 +13,7 @@ export default function GlobalNotFound() {
     <html lang="en" className={fontVariables}>
       <body className="grid min-h-dvh place-items-center px-6">
         <main className="flex flex-col items-center gap-6 text-center">
-          <Image src="/brand/logo.png" alt="Flawless Skin Care" width={720} height={415} className="h-auto w-36" />
+          <Image src="/brand/logo.png" unoptimized alt="Flawless Skin Care" width={400} height={231} className="h-auto w-36" />
           <h1 className="text-4xl">Page not found</h1>
           <p className="text-muted">
             The page you&apos;re looking for doesn&apos;t exist. · La page que vous cherchez n&apos;existe pas.

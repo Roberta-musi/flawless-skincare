@@ -23,7 +23,7 @@ export function Ornament({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center justify-center gap-4", className)} aria-hidden>
       <span className="hairline w-16" />
-      <Image src="/brand/butterfly-gold.png" alt="" width={240} height={246} className="h-5 w-auto opacity-90" />
+      <Image src="/brand/butterfly-gold.png" unoptimized alt="" width={120} height={123} className="h-5 w-auto opacity-90" />
       <span className="hairline w-16" />
     </div>
   );

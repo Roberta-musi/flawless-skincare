@@ -58,6 +58,8 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
         />
         <Toaster
           position="bottom-center"
+          offset={{ bottom: 96 }}
+          mobileOffset={{ bottom: 88, left: 16, right: 16 }}
           toastOptions={{
             classNames: {
               toast: "!rounded-2xl !border-line !bg-white !font-sans !text-plum !shadow-[0_20px_50px_-20px_rgb(43_20_49/0.35)]",

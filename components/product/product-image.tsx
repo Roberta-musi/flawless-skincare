@@ -30,7 +30,7 @@ export function ProductImage({
       ) : (
         <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_30%_20%,var(--color-lilac)_0%,var(--color-blush)_55%,var(--color-blush-deep)_100%)]">
           <div className="flex flex-col items-center gap-3 px-6 text-center">
-            <Image src="/brand/butterfly-gold.png" alt="" width={240} height={246} className="h-10 w-auto opacity-80" />
+            <Image src="/brand/butterfly-gold.png" unoptimized alt="" width={120} height={123} className="h-10 w-auto opacity-80" />
             <span className="font-display text-lg leading-tight text-plum/70 italic">{alt}</span>
           </div>
         </div>
