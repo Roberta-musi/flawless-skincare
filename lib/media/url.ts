@@ -6,7 +6,15 @@ export function variantKey(key: string, width: (typeof imageWidths)[number]) {
   return `${key}-${width}.webp`;
 }
 
+export function ogKey(key: string) {
+  return `${key}-og.jpg`;
+}
+
 export function mediaUrl(key: string, width: number) {
   const size = imageWidths.find((w) => w >= width) ?? imageWidths[imageWidths.length - 1];
   return `${mediaBase}/${variantKey(key, size)}`;
+}
+
+export function ogImageUrl(key: string) {
+  return `${mediaBase}/${ogKey(key)}`;
 }

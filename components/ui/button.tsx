@@ -13,9 +13,9 @@ const variants = {
 };
 
 const sizes = {
-  sm: "h-9 px-4 text-[11px]",
-  md: "h-11 px-6 text-xs",
-  lg: "h-13 px-8 text-[13px]",
+  sm: "min-h-9 px-4 py-2 text-[11px]",
+  md: "min-h-11 px-6 py-2.5 text-xs",
+  lg: "min-h-13 px-7 py-3 text-[13px]",
   icon: "size-11 text-xs",
 };
 
@@ -26,7 +26,7 @@ type Styling = { variant?: ButtonVariant; size?: ButtonSize };
 
 export function buttonClasses({ variant = "primary", size = "md" }: Styling = {}, className?: string) {
   return cn(
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2.5 rounded-full font-medium uppercase tracking-[0.16em] whitespace-nowrap transition-all duration-300 ease-(--ease-soft) active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2.5 rounded-full text-center leading-tight font-medium uppercase tracking-[0.14em] transition-all duration-300 ease-(--ease-soft) active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
     variants[variant],
     sizes[size],
     className,

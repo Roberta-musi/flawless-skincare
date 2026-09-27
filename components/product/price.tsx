@@ -28,7 +28,7 @@ export function ProductPrice({
 
   const variant = variants.find((v) => v.priceXaf === lowest)!;
   return (
-    <span className={cn("flex items-baseline gap-2 text-sm tabular-nums", className)}>
+    <span className={cn("flex flex-wrap items-baseline gap-x-2 text-sm tabular-nums", className)}>
       <span className={cn(isOnSale(variant) && "text-fuchsia")}>{formatPrice(lowest, locale)}</span>
       {isOnSale(variant) && <s className="text-xs text-muted">{formatPrice(variant.compareAtPriceXaf!, locale)}</s>}
     </span>

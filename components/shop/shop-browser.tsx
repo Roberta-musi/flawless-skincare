@@ -107,7 +107,7 @@ export function ShopBrowser({ products, categories, concerns, skinTypes, locale,
   ].filter((chip): chip is { key: string; label: string } => Boolean(chip));
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[15rem_1fr] lg:gap-14">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-14">
       <aside className="hidden lg:block">
         <div className="sticky top-28">{panel}</div>
       </aside>
