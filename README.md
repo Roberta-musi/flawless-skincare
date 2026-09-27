@@ -6,8 +6,11 @@ Full-stack website for Flawless Skin Care, a skincare and beauty business in Lim
 
 - Next.js (App Router) + TypeScript
 - Tailwind CSS + shadcn/ui
-- Supabase (PostgreSQL, Auth, Storage)
-- Vercel (hosting)
+- Cloudflare Workers via OpenNext (hosting)
+- Cloudflare D1 + Drizzle ORM (database), R2 (images)
+- Better Auth (admin login)
+
+Scope, decisions and architecture: [docs/scope-and-stack.md](docs/scope-and-stack.md)
 
 ## Getting started
 
