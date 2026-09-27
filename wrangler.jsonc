@@ -39,5 +39,18 @@
   ],
   "observability": {
     "enabled": true
+  },
+  "env": {
+    // Only used by `npm run deploy` while Next.js pre-renders pages, so they are built from the live database.
+    "prerender": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "flawless",
+          "database_id": "00000000-0000-0000-0000-000000000001",
+          "remote": true
+        }
+      ]
+    }
   }
 }
