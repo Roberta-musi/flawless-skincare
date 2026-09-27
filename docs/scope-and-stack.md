@@ -65,7 +65,7 @@ Contact details found online, all **unconfirmed**:
 
 The database and the image bucket have no public address; only the app can reach them. A separate API server (Express/Nest/Laravel) would mean a second always-on deployment to pay for and maintain, plus cross-site request (CORS) setup and duplicated validation. That's only worth it if a mobile app ever needs the same API, and Route Handlers can provide one then.
 
-**How admin edits reach the public site:** public pages are pre-rendered and cached, which makes them fast and easy for Google to crawl. Every admin save calls `updateTag()`/`revalidateTag()` on the affected data (Next.js 16 Cache Components), so the change shows up within seconds and no redeploy is needed.
+**How admin edits reach the public site:** public pages are pre-rendered and cached, which makes them fast and easy for Google to crawl. Every admin save calls `revalidatePath()` on the public site, so the next visitor gets a freshly rendered page and no redeploy is needed. The cached pages live in R2 and the revalidation markers in a second D1 database (the OpenNext incremental and tag caches).
 
 ---
 
@@ -292,7 +292,7 @@ Online payment via a local aggregator (MTN MoMo / Orange Money / card) · custom
 | Layer | Choice | Why |
 |---|---|---|
 | Framework | **Next.js 16.3** (App Router, React 19.2, TypeScript), already scaffolded | Server rendering + static caching for SEO; site, admin and server logic in one codebase |
-| Caching | **Cache Components** (`cacheComponents: true`, `'use cache'`, `cacheTag`, `updateTag`) | Pages stay static-fast, and admin edits invalidate exactly what changed |
+| Caching | **Pre-rendered pages + `revalidatePath`**, stored in R2 with a D1 tag cache (OpenNext) | Pages stay static-fast, and admin edits refresh them on the next visit. Cache Components (`'use cache'`) was tried and dropped: it hangs on the Workers runtime in Next 16.3 |
 | Styling | **Tailwind CSS v4**, **shadcn/ui** for admin and form primitives | Already set up; accessible components without a heavy UI kit |
 | Database | **Cloudflare D1** (SQLite) | Free, never pauses, built-in point-in-time restore (Time Travel), no public endpoint |
 | ORM + migrations | **Drizzle ORM** + `drizzle-kit`, applied with `wrangler d1 migrations` | Type-safe queries from one schema file; portable to Postgres later if ever needed |
@@ -304,7 +304,7 @@ Online payment via a local aggregator (MTN MoMo / Orange Money / card) · custom
 | Maps | Google Maps **embed** + "Get directions" link | No API key or billing needed |
 | Analytics | **Cloudflare Web Analytics** (free, cookieless) + **Google Search Console** | Traffic stats + search performance. WhatsApp-button clicks are counted with a tiny first-party beacon |
 | Testing | **Playwright** smoke tests on critical flows (booking, WhatsApp link, bag, admin login, product edit) | Catches regressions on what earns money |
-| Hosting | **Cloudflare Workers** via the OpenNext adapter (`@opennextjs/cloudflare`) + custom domain on Cloudflare DNS | Free plan allows commercial use; supports Next.js 16 and `'use cache'` |
+| Hosting | **Cloudflare Workers** via the OpenNext adapter (`@opennextjs/cloudflare`) + custom domain on Cloudflare DNS | Free plan allows commercial use; supports Next.js 16 and on-demand revalidation |
 | Scheduled jobs | **GitHub Actions** (free) | Weekly `wrangler d1 export` of the database to R2 |
 | Source control | GitHub | |
 

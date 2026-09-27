@@ -1,6 +1,6 @@
 import "server-only";
 import { and, asc, desc, eq } from "drizzle-orm";
-import { cacheLife, cacheTag } from "next/cache";
+import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { isTranslated } from "@/lib/i18n/localized";
 import {
@@ -14,7 +14,6 @@ import {
   reviews,
   skinTypes,
 } from "@/lib/db/schema";
-import { tags } from "./tags";
 
 export const productTranslatableFields = ["name", "shortDescription", "description", "benefits", "howToUse", "keyIngredients"];
 
@@ -58,10 +57,7 @@ function toSummary(p: SummarySource) {
 
 export type ProductSummary = ReturnType<typeof toSummary>;
 
-export async function getCatalog() {
-  "use cache";
-  cacheTag(tags.catalog);
-  cacheLife("max");
+export const getCatalog = cache(async () => {
   const db = await getDb();
   const [categoryRows, concernRows, skinTypeRows, productRows] = await Promise.all([
     db.query.categories.findMany({
@@ -85,17 +81,14 @@ export async function getCatalog() {
       .filter((p) => p.categoryId == null || visibleCategoryIds.has(p.categoryId))
       .map(toSummary),
   };
-}
+});
 
 export type Catalog = Awaited<ReturnType<typeof getCatalog>>;
 export type Category = Catalog["categories"][number];
 export type Concern = Catalog["concerns"][number];
 export type SkinType = Catalog["skinTypes"][number];
 
-export async function getProductBySlug(slug: string) {
-  "use cache";
-  cacheTag(tags.catalog, tags.reviews);
-  cacheLife("max");
+export const getProductBySlug = cache(async (slug: string) => {
   const db = await getDb();
   const product = await db.query.products.findFirst({
     where: and(eq(products.slug, slug), eq(products.isPublished, true)),
@@ -131,6 +124,6 @@ export async function getProductBySlug(slug: string) {
       .filter((s) => s.itemProduct.isPublished)
       .map((s) => ({ quantity: s.quantity, product: toSummary(s.itemProduct) })),
   };
-}
+});
 
 export type ProductDetail = NonNullable<Awaited<ReturnType<typeof getProductBySlug>>>;

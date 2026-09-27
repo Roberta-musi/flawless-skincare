@@ -1,14 +1,10 @@
 import "server-only";
 import { desc, eq } from "drizzle-orm";
-import { cacheLife, cacheTag } from "next/cache";
+import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { reviews } from "@/lib/db/schema";
-import { tags } from "./tags";
 
-export async function getApprovedReviews() {
-  "use cache";
-  cacheTag(tags.reviews, tags.catalog, tags.services);
-  cacheLife("max");
+export const getApprovedReviews = cache(async () => {
   const db = await getDb();
   return db.query.reviews.findMany({
     where: eq(reviews.status, "approved"),
@@ -18,6 +14,6 @@ export async function getApprovedReviews() {
       service: { columns: { slug: true, nameEn: true, nameFr: true, isPublished: true } },
     },
   });
-}
+});
 
 export type PublicReview = Awaited<ReturnType<typeof getApprovedReviews>>[number];

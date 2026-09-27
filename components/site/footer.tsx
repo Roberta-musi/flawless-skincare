@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { FacebookIcon, InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/components/icons";
@@ -13,12 +12,6 @@ import { localized } from "@/lib/i18n/localized";
 import { localePath } from "@/lib/i18n/paths";
 import { addressLines, businessWhatsAppUrl } from "@/lib/site";
 import { LanguageSwitch } from "./language-switch";
-
-async function CurrentYear() {
-  "use cache";
-  cacheLife("days");
-  return new Date().getFullYear();
-}
 
 export function Footer({
   locale,
@@ -170,7 +163,7 @@ export function Footer({
       <Container>
         <div className="flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-xs text-ivory/55 sm:flex-row">
           <p>
-            © <CurrentYear /> {settings.businessName}. {dict.footer.rights}
+            © {new Date().getFullYear()} {settings.businessName}. {dict.footer.rights}
           </p>
           <LanguageSwitch locale={locale} className="[&_a]:text-ivory/55 [&_a:hover]:text-ivory [&_span[aria-current]]:text-ivory" />
         </div>

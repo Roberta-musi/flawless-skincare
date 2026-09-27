@@ -5,7 +5,6 @@ import { LoginForm } from "@/components/admin/auth-forms";
 import { getAdminSession } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Sign in" };
-export const instant = false;
 
 export default async function LoginPage({ searchParams }: PageProps<"/admin/login">) {
   if (await getAdminSession()) redirect("/admin");

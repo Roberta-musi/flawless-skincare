@@ -2,8 +2,6 @@ import { AdminMobileNav, AdminSidebar } from "@/components/admin/admin-nav";
 import { requireAdmin } from "@/lib/auth";
 import { getAdminCounts } from "@/lib/data/admin/dashboard";
 
-export const instant = false;
-
 export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   const session = await requireAdmin();
   const counts = await getAdminCounts();

@@ -1,21 +1,20 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { addReview, deleteReview, moderateReview } from "@/lib/data/admin/reviews";
-import { tags } from "@/lib/data/tags";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { reviewStatuses } from "@/lib/db/schema";
 
 const moderation = z.object({ status: z.enum(reviewStatuses).optional(), isFeatured: z.boolean().optional() });
 
 export async function moderateReviewAction(id: string, changes: unknown) {
   await moderateReview(id, moderation.parse(changes));
-  updateTag(tags.reviews);
+  revalidatePublicSite();
 }
 
 export async function deleteReviewAction(id: string) {
   await deleteReview(id);
-  updateTag(tags.reviews);
+  revalidatePublicSite();
 }
 
 const manualReview = z.object({
@@ -39,6 +38,6 @@ export async function addReviewAction(payload: unknown) {
   const { about, consent: _consent, ...input } = parsed.data;
   const [kind, id] = about ? about.split(":") : [null, null];
   await addReview({ ...input, productId: kind === "product" ? id : null, serviceId: kind === "service" ? id : null });
-  updateTag(tags.reviews);
+  revalidatePublicSite();
   return { ok: true as const };
 }

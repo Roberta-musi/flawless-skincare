@@ -3,7 +3,6 @@ import { AuthShell } from "@/components/admin/auth-shell";
 import { NewPasswordForm, RequestResetForm } from "@/components/admin/auth-forms";
 
 export const metadata: Metadata = { title: "Reset password" };
-export const instant = false;
 
 export default async function ResetPasswordPage({ searchParams }: PageProps<"/admin/reset-password">) {
   const { token, error } = await searchParams;
