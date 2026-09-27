@@ -107,7 +107,7 @@ export default async function AboutPage() {
           <ol className="mt-14 grid gap-6 md:grid-cols-3">
             {dict.about.values.map((value, i) => (
               <li key={value.title} className="flex flex-col gap-4 rounded-[1.5rem] bg-white p-8 ring-1 ring-line">
-                <span className="font-display text-5xl leading-none text-gold italic">{String(i + 1).padStart(2, "0")}</span>
+                <span className="font-display text-5xl leading-none text-gold-deep italic">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="text-2xl">{value.title}</h3>
                 <p className="text-sm leading-6 text-muted">{value.body}</p>
               </li>

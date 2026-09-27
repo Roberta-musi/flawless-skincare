@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 
 export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <html lang="en" className={fontVariables}>
+    <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
       <body className="min-h-dvh bg-ivory">
         {children}
         <Toaster

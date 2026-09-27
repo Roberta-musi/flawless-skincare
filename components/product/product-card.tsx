@@ -16,12 +16,12 @@ export function ProductCard({
   product,
   locale,
   dict,
-  priority,
+  eager,
 }: {
   product: ProductSummary;
   locale: Locale;
   dict: ProductCardDict;
-  priority?: boolean;
+  eager?: boolean;
 }) {
   const name = localized(product, "name", locale);
   const href = localePath(locale, `/products/${product.slug}`);
@@ -46,7 +46,7 @@ export function ProductCard({
             imageKey={product.image?.key}
             alt={name}
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            priority={priority}
+            loading={eager ? "eager" : undefined}
             className="aspect-[4/5] rounded-[1.25rem]"
             imageClassName="transition-transform duration-[1.2s] ease-(--ease-soft) group-hover:scale-[1.04]"
           />

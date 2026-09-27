@@ -3,30 +3,27 @@
 import { APIError } from "better-auth/api";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { safeAdminPath } from "@/lib/admin-links";
 import { getAuth } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
 
-export type AuthState = { error?: string; done?: boolean };
-
-function safeNext(value: FormDataEntryValue | null) {
-  return typeof value === "string" && value.startsWith("/admin") && !value.startsWith("//") ? value : "/admin";
-}
+export type AuthState = { error?: string; done?: boolean; email?: string };
 
 export async function signIn(_: AuthState, formData: FormData): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
-  if (!email || !password) return { error: "Enter your email and password." };
+  if (!email || !password) return { error: "Enter your email and password.", email };
 
   const auth = await getAuth();
   try {
     await auth.api.signInEmail({ body: { email, password }, headers: await headers() });
   } catch (error) {
     if (error instanceof APIError && error.status === "TOO_MANY_REQUESTS") {
-      return { error: "Too many attempts. Please wait a minute and try again." };
+      return { error: "Too many attempts. Please wait a minute and try again.", email };
     }
-    return { error: "That email and password don't match. Please try again." };
+    return { error: "That email and password don't match. Please try again.", email };
   }
-  redirect(safeNext(formData.get("next")));
+  redirect(safeAdminPath(formData.get("next")));
 }
 
 export async function signOut() {
@@ -43,7 +40,7 @@ export async function requestReset(_: AuthState, formData: FormData): Promise<Au
     await auth.api.requestPasswordReset({ body: { email, redirectTo: `${siteUrl()}/admin/reset-password` } });
   } catch (error) {
     if (error instanceof APIError && error.status === "TOO_MANY_REQUESTS") {
-      return { error: "Too many requests. Please wait a few minutes." };
+      return { error: "Too many requests. Please wait a few minutes.", email };
     }
   }
   return { done: true };

@@ -88,7 +88,7 @@ export function PurchasePanel({
 
       {variants.length > 1 && (
         <fieldset className="flex flex-col gap-3">
-          <legend className="mb-3 text-[11px] font-medium tracking-[0.24em] text-gold uppercase">
+          <legend className="mb-3 text-[11px] font-medium tracking-[0.24em] text-gold-deep uppercase">
             {dict.product.size}
             {variantLabel && <span className="ml-2 tracking-normal text-plum normal-case">{variantLabel}</span>}
           </legend>

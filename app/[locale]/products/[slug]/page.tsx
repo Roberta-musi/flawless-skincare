@@ -173,7 +173,7 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/produ
             locale={locale}
             whatsappNumber={normalizeWhatsAppNumber(settings.whatsapp)}
             productUrl={url}
-            dict={dict}
+            dict={{ product: dict.product, common: dict.common, whatsapp: dict.whatsapp, bag: dict.bag }}
           />
 
           {adviceUrl && (

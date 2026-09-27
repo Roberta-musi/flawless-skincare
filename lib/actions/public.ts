@@ -2,13 +2,14 @@
 
 import { headers } from "next/headers";
 import { after } from "next/server";
+import { adminEntryUrl } from "@/lib/admin-links";
 import { createBooking, createMessage, createReview } from "@/lib/data/submissions";
 import { getSettings } from "@/lib/data/site";
 import { notificationRecipient, sendEmail } from "@/lib/email";
 import { formatDate } from "@/lib/format";
 import { dictionaries } from "@/lib/i18n/server";
 import { interpolate, localized } from "@/lib/i18n/localized";
-import { businessWhatsAppUrl, siteUrl } from "@/lib/site";
+import { businessWhatsAppUrl } from "@/lib/site";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { type FieldErrors, isSpam, parseBooking, parseMessage, parseReview } from "@/lib/validation/forms";
 
@@ -60,7 +61,7 @@ export async function submitBooking(_: FormState<BookingSuccess>, formData: Form
     notes ? "" : false,
     notes ? `Notes: ${notes}` : false,
     "",
-    `Open in admin: ${siteUrl()}/admin/bookings/${created.id}`,
+    `Open in admin: ${adminEntryUrl(`/admin/bookings/${created.id}`)}`,
   ]);
 
   return {
@@ -84,7 +85,7 @@ export async function submitReview(_: FormState, formData: FormData): Promise<Fo
     parsed.data.rating != null ? `Rating: ${parsed.data.rating}/5` : false,
     `“${parsed.data.body}”`,
     "",
-    `Approve or reject: ${siteUrl()}/admin/reviews?highlight=${id}`,
+    `Approve or reject: ${adminEntryUrl(`/admin/reviews?highlight=${id}`)}`,
   ]);
   return { status: "success" };
 }
@@ -103,7 +104,7 @@ export async function submitMessage(_: FormState, formData: FormData): Promise<F
     "",
     parsed.data.body,
     "",
-    `Inbox: ${siteUrl()}/admin/messages`,
+    `Inbox: ${adminEntryUrl("/admin/messages")}`,
   ]);
   return { status: "success" };
 }

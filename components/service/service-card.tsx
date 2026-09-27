@@ -34,7 +34,7 @@ export function ServiceCard({
         />
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-6 md:p-7">
-        <p className="text-[10px] font-medium tracking-[0.24em] text-gold uppercase">{dict.services.modes[service.mode]}</p>
+        <p className="text-[10px] font-medium tracking-[0.24em] text-gold-deep uppercase">{dict.services.modes[service.mode]}</p>
         <h3 className="text-2xl leading-tight">
           <Link href={href} className="transition-colors hover:text-fuchsia">
             {name}

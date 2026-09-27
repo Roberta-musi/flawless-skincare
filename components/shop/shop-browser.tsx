@@ -180,10 +180,11 @@ export function ShopBrowser({ products, categories, concerns, skinTypes, locale,
           </div>
         )}
 
+        <h2 className="sr-only">{resultsLabel(dict, results.length)}</h2>
         {results.length ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-6 xl:grid-cols-3">
             {results.map((product, i) => (
-              <ProductCard key={product.id} product={product} locale={locale} dict={dict} priority={i < 2} />
+              <ProductCard key={product.id} product={product} locale={locale} dict={dict} eager={i < 2} />
             ))}
           </div>
         ) : (
@@ -241,7 +242,7 @@ function FilterPanel({
   counts: { category: (id: string) => number; all: number };
   onChange: (values: Record<string, string | null>) => void;
 }) {
-  const heading = "mb-3 text-[11px] font-medium tracking-[0.24em] text-gold uppercase";
+  const heading = "mb-3 text-[11px] font-medium tracking-[0.24em] text-gold-deep uppercase";
   const chip = (active: boolean) =>
     cn(
       "rounded-full border px-3.5 py-1.5 text-[13px] transition-colors",

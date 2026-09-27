@@ -22,7 +22,7 @@ export function LanguageSwitch({ locale, className }: { locale: Locale; classNam
               href={switchLocalePath(pathname, l)}
               hrefLang={l}
               lang={l}
-              className="px-1 text-plum/45 transition-colors hover:text-fuchsia"
+              className="px-1 text-plum/65 transition-colors hover:text-fuchsia"
               aria-label={l === "fr" ? "Français" : "English"}
             >
               {l.toUpperCase()}

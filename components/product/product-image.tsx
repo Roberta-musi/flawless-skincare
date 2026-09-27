@@ -5,14 +5,16 @@ export function ProductImage({
   imageKey,
   alt,
   sizes,
-  priority,
+  preload,
+  loading,
   className,
   imageClassName,
 }: {
   imageKey: string | null | undefined;
   alt: string;
   sizes: string;
-  priority?: boolean;
+  preload?: boolean;
+  loading?: "eager";
   className?: string;
   imageClassName?: string;
 }) {
@@ -24,7 +26,8 @@ export function ProductImage({
           alt={alt}
           fill
           sizes={sizes}
-          priority={priority}
+          preload={preload}
+          loading={loading}
           className={cn("object-cover", imageClassName)}
         />
       ) : (

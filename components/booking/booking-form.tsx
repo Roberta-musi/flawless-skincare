@@ -318,7 +318,7 @@ function BookingForm({
 
       <aside className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
         <div className="rounded-[1.5rem] bg-white p-6 ring-1 ring-line">
-          <p className="mb-4 text-[11px] font-medium tracking-[0.24em] text-gold uppercase">{dict.booking.summary}</p>
+          <p className="mb-4 text-[11px] font-medium tracking-[0.24em] text-gold-deep uppercase">{dict.booking.summary}</p>
           {selected ? (
             <div className="flex flex-col gap-4">
               <p className="font-display text-2xl leading-tight">{selected.name}</p>

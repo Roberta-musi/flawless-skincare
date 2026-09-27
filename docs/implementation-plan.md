@@ -41,4 +41,4 @@ Working checklist for building the scope in [scope-and-stack.md](scope-and-stack
 | 21 | Admin: reviews moderation | data tests | ✅ |
 | 22 | Admin: brand profile, business settings, FAQ & policies | data tests | ✅ |
 | 23 | Cloudflare: OpenNext build + local preview, cache revalidation check, backup workflow, deploy guide | `opennextjs-cloudflare preview` smoke test | ✅ |
-| 24 | Final pass: accessibility, performance, end-to-end suite, docs | all green | ☐ |
+| 24 | Final pass: accessibility, performance, end-to-end suite, docs | all green | ✅ |

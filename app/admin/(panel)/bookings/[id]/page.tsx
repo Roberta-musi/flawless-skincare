@@ -28,7 +28,7 @@ export default async function BookingPage({ params }: PageProps<"/admin/bookings
       <Card title={booking.serviceName} className="mb-6" actions={booking.service ? <Link href={`/services/${booking.service.slug}`} target="_blank" className="text-sm text-fuchsia hover:underline">View service</Link> : undefined}>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <p className="mb-2 text-[11px] font-medium tracking-[0.2em] text-gold uppercase">Preferred times</p>
+            <p className="mb-2 text-[11px] font-medium tracking-[0.2em] text-gold-deep uppercase">Preferred times</p>
             <ol className="flex flex-col gap-1.5 text-[15px]">
               {booking.preferredSlots.map((slot, i) => (
                 <li key={i}>
@@ -40,7 +40,7 @@ export default async function BookingPage({ params }: PageProps<"/admin/bookings
           </div>
           {booking.notes && (
             <div>
-              <p className="mb-2 text-[11px] font-medium tracking-[0.2em] text-gold uppercase">Customer notes</p>
+              <p className="mb-2 text-[11px] font-medium tracking-[0.2em] text-gold-deep uppercase">Customer notes</p>
               <p className="text-[15px] leading-7 whitespace-pre-line">{booking.notes}</p>
             </div>
           )}

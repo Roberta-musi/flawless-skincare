@@ -24,7 +24,7 @@ export function ProductGallery({
         imageKey={images[0]?.key}
         alt={images[0]?.alt ?? name}
         sizes="(min-width: 1024px) 50vw, 100vw"
-        priority
+        preload
         className="aspect-[4/5] rounded-[1.75rem]"
       />
     );
@@ -50,7 +50,7 @@ export function ProductGallery({
         >
           {images.map((image, i) => (
             <div key={image.key} className="relative aspect-[4/5] w-full shrink-0 snap-center bg-blush">
-              <Image src={image.key} alt={image.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" priority={i === 0} className="object-cover" />
+              <Image src={image.key} alt={image.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" preload={i === 0} className="object-cover" />
             </div>
           ))}
         </div>

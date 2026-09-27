@@ -68,7 +68,7 @@ export function Hero({
           <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-[13px] text-plum/80">
             {foundedYear && (
               <li className="flex items-center gap-2">
-                <span className="font-display text-lg text-gold italic">{interpolate(dict.common.since, { year: foundedYear })}</span>
+                <span className="font-display text-lg text-gold-deep italic">{interpolate(dict.common.since, { year: foundedYear })}</span>
               </li>
             )}
             {trust.map(({ icon: Icon, label }) => (
@@ -87,7 +87,7 @@ export function Hero({
               imageKey={main?.image?.key}
               alt={main ? localized(main, "name", locale) : dict.meta.siteName}
               sizes="(min-width: 1024px) 38vw, 80vw"
-              priority
+              preload
               className="arch aspect-[4/5] shadow-[0_40px_80px_-40px_rgb(43_20_49/0.45)]"
             />
           </div>
@@ -104,7 +104,7 @@ export function Hero({
               href={localePath(locale, `/products/${spotlight.slug}`)}
               className="absolute right-2 -bottom-6 flex max-w-[15rem] flex-col gap-1 rounded-2xl bg-white/95 px-5 py-4 shadow-[0_24px_50px_-24px_rgb(43_20_49/0.45)] ring-1 ring-line backdrop-blur transition-transform duration-500 hover:-translate-y-1 sm:right-6"
             >
-              <span className="text-[10px] font-medium tracking-[0.24em] text-gold uppercase">{dict.common.bestseller}</span>
+              <span className="text-[10px] font-medium tracking-[0.24em] text-gold-deep uppercase">{dict.common.bestseller}</span>
               <span className="font-display text-lg leading-snug">{localized(spotlight, "name", locale)}</span>
               <ProductPrice variants={spotlight.variants} locale={locale} labels={dict.common} className="text-muted" />
             </Link>

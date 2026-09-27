@@ -81,7 +81,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/servi
           imageKey={service.imageKey}
           alt={name}
           sizes="(min-width: 1024px) 40vw, 100vw"
-          priority
+          preload
           className="aspect-[4/5] rounded-[12rem_12rem_1.5rem_1.5rem] w-full max-w-md justify-self-center lg:max-w-none"
         />
         <div className="flex animate-rise flex-col items-start gap-6">
@@ -121,7 +121,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/servi
               <div className="flex flex-col gap-6">
                 {sections.map((section, i) => (
                   <div key={section.title} className="rounded-[1.5rem] bg-white p-7 ring-1 ring-line">
-                    <p className="mb-3 font-display text-4xl leading-none text-gold italic">{String(i + 1).padStart(2, "0")}</p>
+                    <p className="mb-3 font-display text-4xl leading-none text-gold-deep italic">{String(i + 1).padStart(2, "0")}</p>
                     <h2 className="mb-3 text-2xl">{section.title}</h2>
                     <Prose source={section.body} />
                   </div>

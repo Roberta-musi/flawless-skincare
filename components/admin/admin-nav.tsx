@@ -138,7 +138,7 @@ export function AdminSidebar({ counts, user }: { counts: Counts; user: { name: s
   return (
     <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto bg-plum px-4 py-7 lg:flex">
       <Link href="/admin" className="px-3">
-        <Logo light className="w-28 md:w-28" />
+        <Logo light eager className="w-28 md:w-28" />
       </Link>
       <div className="flex-1">
         <NavList counts={counts} dark />
@@ -162,7 +162,7 @@ export function AdminMobileNav({ counts, user }: { counts: Counts; user: { name:
     <>
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-ivory/90 px-4 backdrop-blur lg:hidden">
         <Link href="/admin">
-          <Logo className="w-20 md:w-20" />
+          <Logo eager className="w-20 md:w-20" />
         </Link>
         <button
           type="button"
@@ -203,7 +203,7 @@ export function AdminMobileNav({ counts, user }: { counts: Counts; user: { name:
           More
         </button>
       </nav>
-      <Sheet open={open} onClose={() => setOpen(false)} side="left" label="Admin menu" closeLabel="Close menu" header={<Logo className="w-24 md:w-24" />}>
+      <Sheet open={open} onClose={() => setOpen(false)} side="left" label="Admin menu" closeLabel="Close menu" header={<Logo eager className="w-24 md:w-24" />}>
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-6">
           <div className="flex-1">
             <NavList counts={counts} onNavigate={() => setOpen(false)} />

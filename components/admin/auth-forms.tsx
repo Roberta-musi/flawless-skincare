@@ -15,7 +15,7 @@ export function LoginForm({ next }: { next: string | null }) {
     <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="next" value={next ?? "/admin"} />
       <Field label="Email" htmlFor="email">
-        <Input id="email" name="email" type="email" autoComplete="username" required autoFocus />
+        <Input id="email" name="email" type="email" autoComplete="username" defaultValue={state.email} required autoFocus />
       </Field>
       <Field label="Password" htmlFor="password">
         <Input id="password" name="password" type="password" autoComplete="current-password" required />
@@ -48,7 +48,7 @@ export function RequestResetForm() {
   return (
     <form action={action} className="flex flex-col gap-5">
       <Field label="Email" htmlFor="email">
-        <Input id="email" name="email" type="email" autoComplete="username" required autoFocus />
+        <Input id="email" name="email" type="email" autoComplete="username" defaultValue={state.email} required autoFocus />
       </Field>
       {state.error && <FormAlert>{state.error}</FormAlert>}
       <Button type="submit" size="lg" disabled={pending}>

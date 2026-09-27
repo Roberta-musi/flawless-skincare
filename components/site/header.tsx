@@ -59,7 +59,7 @@ export function Header({ locale, dict, settings }: { locale: Locale; dict: Dicti
             </nav>
           </div>
           <Link href={path("/")} className="shrink-0" aria-label={`${dict.meta.siteName}, ${dict.nav.home}`}>
-            <Logo priority className="w-24 lg:w-28 xl:w-32" />
+            <Logo eager className="w-24 lg:w-28 xl:w-32" />
           </Link>
           <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
             <Link

@@ -66,7 +66,7 @@ export function ConcernsSection({ locale, dict, catalog }: Props & { catalog: Ca
                 )}
               >
                 <span className="font-display text-2xl leading-tight">{localized(concern, "name", locale)}</span>
-                <span className="flex items-center justify-between text-[11px] tracking-[0.16em] text-plum/60 uppercase">
+                <span className="flex items-center justify-between text-[11px] tracking-[0.16em] text-plum/70 uppercase">
                   {countLabel(dict, concern.count)}
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
                 </span>
@@ -231,7 +231,7 @@ export function StepsSection({ locale, dict }: Props) {
         <ol className="mt-14 grid w-full gap-12 md:grid-cols-3 md:gap-10">
           {dict.home.steps.map((step, i) => (
             <li key={step.title} className="flex flex-col items-center gap-4 text-center">
-              <span className="font-display text-6xl leading-none text-gold italic">{String(i + 1).padStart(2, "0")}</span>
+              <span className="font-display text-6xl leading-none text-gold-deep italic">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="text-2xl">{step.title}</h3>
               <p className="max-w-xs text-sm leading-6 text-muted">{step.body}</p>
             </li>

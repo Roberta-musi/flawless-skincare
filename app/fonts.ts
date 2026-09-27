@@ -1,7 +1,7 @@
 import { Cormorant_Garamond, Jost } from "next/font/google";
 
 export const displayFont = Cormorant_Garamond({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-display-face",
@@ -9,7 +9,7 @@ export const displayFont = Cormorant_Garamond({
 });
 
 export const sansFont = Jost({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   variable: "--font-sans-face",
   display: "swap",
 });

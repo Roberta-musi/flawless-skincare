@@ -55,7 +55,7 @@ export function MobileMenu({
         side="left"
         label={labels.menu}
         closeLabel={labels.close}
-        header={<Logo className="w-28" />}
+        header={<Logo eager className="w-28" />}
       >
         <nav className="flex-1 overflow-y-auto px-5 py-6 sm:px-6" aria-label={labels.menu}>
           <ul className="flex flex-col">
@@ -67,7 +67,7 @@ export function MobileMenu({
                   className="group flex items-baseline gap-4 py-4"
                   aria-current={pathname === link.href ? "page" : undefined}
                 >
-                  <span className="w-6 text-[11px] font-medium tracking-[0.2em] text-gold">
+                  <span className="w-6 text-[11px] font-medium tracking-[0.2em] text-gold-deep">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span className="font-display text-3xl text-plum transition-colors group-hover:text-fuchsia group-aria-[current=page]:text-fuchsia">

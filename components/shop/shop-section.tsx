@@ -25,8 +25,8 @@ export function ShopSection({
       <Suspense
         fallback={
           <div className="grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-6 lg:ml-[18.5rem] xl:grid-cols-3">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} locale={locale} dict={dict} />
+            {products.map((product, i) => (
+              <ProductCard key={product.id} product={product} locale={locale} dict={dict} eager={i < 2} />
             ))}
           </div>
         }
@@ -37,7 +37,7 @@ export function ShopSection({
           concerns={pick(catalog.concerns)}
           skinTypes={pick(catalog.skinTypes)}
           locale={locale}
-          dict={dict}
+          dict={{ common: dict.common, product: dict.product, bag: dict.bag, shop: dict.shop, whatsapp: dict.whatsapp }}
           lockedCategoryId={lockedCategoryId}
         />
       </Suspense>

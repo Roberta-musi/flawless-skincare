@@ -38,7 +38,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
   const whatsapp = businessWhatsAppUrl(settings, dict.whatsapp.messages.general);
 
   return (
-    <html lang={locale} className={fontVariables}>
+    <html lang={locale} className={fontVariables} data-scroll-behavior="smooth">
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"
