@@ -8,7 +8,7 @@ export const dictionaries = { en, fr };
 
 export async function getLocale(): Promise<Locale> {
   const value = await localeParam();
-  if (!isLocale(value)) notFound();
+  if (!value || !isLocale(value)) notFound();
   return value;
 }
 
