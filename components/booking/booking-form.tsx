@@ -2,7 +2,7 @@
 
 import { CalendarCheck, Clock, MapPin, Plus, Wallet, X } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { FormAlert, Honeypot, Turnstile } from "@/components/forms/form-extras";
 import { WhatsAppIcon } from "@/components/icons";
 import { Button, ButtonAnchor } from "@/components/ui/button";
@@ -21,6 +21,7 @@ type Dict = Pick<Dictionary, "booking" | "forms" | "common" | "whatsapp" | "nav"
 
 const windows = ["morning", "afternoon", "evening"] as const;
 const initial: FormState<BookingSuccess> = { status: "idle" };
+const noSubscription = () => () => {};
 
 function withLink(template: string, href: string, label: string) {
   const [before, after] = template.split("{link}");
@@ -56,7 +57,7 @@ function BookingForm({
   const [state, action, pending] = useActionState(submitBooking, initial);
   const [service, setService] = useState(services.some((s) => s.slug === initialService) ? initialService! : "");
   const [slots, setSlots] = useState([{ date: "", window: "morning" as (typeof windows)[number] }]);
-  const [minDate, setMinDate] = useState<string>();
+  const minDate = useSyncExternalStore(noSubscription, todayInCameroon, () => undefined);
   const [values, setValues] = useState({ name: "", dialCode: "237", phone: "", email: "", firstVisit: "yes", notes: "" });
   const [accepted, setAccepted] = useState({ policy: false, consent: false });
   const errors = state.status === "error" ? state.errors : {};
@@ -72,7 +73,6 @@ function BookingForm({
     [regionNames, locale],
   );
 
-  useEffect(() => setMinDate(todayInCameroon()), []);
   useEffect(() => {
     if (state.status === "error") document.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
     if (state.status === "success") window.scrollTo({ top: 0, behavior: "smooth" });

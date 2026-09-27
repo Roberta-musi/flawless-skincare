@@ -68,8 +68,9 @@ export function parseBooking(formData: FormData, today = todayInCameroon()): Par
   });
   if (!result.success) return { ok: false, errors: toErrors(result.error) };
 
-  const { dialCode, policy: _policy, consent: _consent, firstVisit, ...data } = result.data;
-  const phone = toInternationalPhone(dialCode, data.phone);
+  const { dialCode, firstVisit, locale, service, slots, name, email, notes } = result.data;
+  const data = { locale, service, slots, name, email, notes };
+  const phone = toInternationalPhone(dialCode, result.data.phone);
   const errors: FieldErrors = {};
   if (!phone) errors.phone = "invalidPhone";
   if (data.slots.some((slot) => slot.date < today)) errors.slots = "invalidDate";
@@ -101,8 +102,8 @@ export function parseReview(formData: FormData): Parsed<ReviewInput> {
     consent: text(formData, "consent"),
   });
   if (!result.success) return { ok: false, errors: toErrors(result.error) };
-  const { consent: _consent, rating, ...data } = result.data;
-  return { ok: true, data: { ...data, rating: rating ? Number(rating) : null } };
+  const { locale, name, location, rating, body, about } = result.data;
+  return { ok: true, data: { locale, name, location, body, about, rating: rating ? Number(rating) : null } };
 }
 
 const messageSchema = z.object({
@@ -126,8 +127,8 @@ export function parseMessage(formData: FormData): Parsed<MessageInput> {
     consent: text(formData, "consent"),
   });
   if (!result.success) return { ok: false, errors: toErrors(result.error) };
-  const { consent: _consent, ...data } = result.data;
-  return { ok: true, data };
+  const { locale, name, contact, subject, body } = result.data;
+  return { ok: true, data: { locale, name, contact, subject, body } };
 }
 
 export function isSpam(formData: FormData) {
