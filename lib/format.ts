@@ -22,3 +22,7 @@ export function formatDate(date: Date | string, locale: Locale, options: Intl.Da
   const value = typeof date === "string" ? new Date(`${date}T12:00:00`) : date;
   return new Intl.DateTimeFormat(intlLocale[locale], { timeZone: "Africa/Douala", ...options }).format(value);
 }
+
+export function todayInCameroon(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Douala" }).format(now);
+}
