@@ -168,10 +168,6 @@
   border-radius: 999px 999px 0 0;
 }
 
-@utility arch-soft {
-  border-radius: 12rem 12rem 1.25rem 1.25rem;
-}
-
 @utility hairline {
   background-image: linear-gradient(90deg, transparent, var(--color-gold-soft), transparent);
   height: 1px;

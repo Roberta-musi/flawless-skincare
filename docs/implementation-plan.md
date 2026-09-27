@@ -18,16 +18,16 @@ Working checklist for building the scope in [scope-and-stack.md](scope-and-stack
 
 | # | Unit | Key checks | Status |
 |---|---|---|---|
-| 1 | Tooling: OpenNext/wrangler config, D1 + R2 bindings, Drizzle, Vitest, scripts, env types | dev server boots with bindings; `next build` passes; Vitest runs | ☐ |
-| 2 | Design system: tokens, fonts, logo asset, UI primitives, icons | primitives page visually reviewed at mobile + desktop widths | ☐ |
-| 3 | Database: schema, migrations, seed (settings, profile, taxonomy, products, services, reviews, FAQ, images) | migration tests; seed runs on local D1 | ☐ |
-| 4 | i18n: locales, dictionaries, `/fr` routing via rewrites, `/en` redirect, localized field helper | unit tests for paths and fallbacks | ☐ |
-| 5 | WhatsApp: number normalising, customer phone (country picker → E.164), message builders EN/FR | unit tests | ☐ |
-| 6 | Public shell: announcement bar, header (desktop/mobile), footer, WhatsApp bubble, 404 | browser check, keyboard nav | ☐ |
-| 7 | Home page | browser check | ☐ |
-| 8 | Shop: listing, client-side filters (category/concern/skin type/search/sort), category pages | unit tests for filtering; browser check | ☐ |
-| 9 | Product page: gallery, sizes, price, set contents, pairs-with, reviews, WhatsApp order | browser check | ☐ |
-| 10 | Bag: store, drawer, multi-item WhatsApp message | unit tests for bag + message | ☐ |
+| 1 | Tooling: OpenNext/wrangler config, D1 + R2 bindings, Drizzle, Vitest, scripts, env types | dev server boots with bindings; `next build` passes; Vitest runs | ✅ |
+| 2 | Design system: tokens, fonts, logo asset, UI primitives, icons | primitives page visually reviewed at mobile + desktop widths | ✅ |
+| 3 | Database: schema, migrations, seed (settings, profile, taxonomy, products, services, reviews, FAQ, images) | migration tests; seed runs on local D1 | ✅ |
+| 4 | i18n: locales, dictionaries, `/fr` routing via rewrites, `/en` redirect, localized field helper | unit tests for paths and fallbacks | ✅ |
+| 5 | WhatsApp: number normalising, customer phone (country picker → E.164), message builders EN/FR | unit tests | ✅ |
+| 6 | Public shell: announcement bar, header (desktop/mobile), footer, WhatsApp bubble, 404 | browser check, keyboard nav | ✅ |
+| 7 | Home page | browser check | ✅ |
+| 8 | Shop: listing, client-side filters (category/concern/skin type/search/sort), category pages | unit tests for filtering; browser check | ✅ |
+| 9 | Product page: gallery, sizes, price, set contents, pairs-with, reviews, WhatsApp order | browser check | ✅ |
+| 10 | Bag: store, drawer, multi-item WhatsApp message | unit tests for bag + message | ✅ |
 | 11 | Services list + service detail | browser check | ☐ |
 | 12 | Booking: form, server action, validation, Turnstile, email, success + WhatsApp follow-up | unit tests (schema, insert); end-to-end | ☐ |
 | 13 | About, Reviews (list + submit), Contact (map, hours, form), FAQ, Privacy | unit tests for submit actions; browser check | ☐ |
