@@ -3,6 +3,9 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  experimental: {
+    globalNotFound: true,
+  },
   images: {
     loader: "custom",
     loaderFile: "./lib/media/image-loader.ts",
