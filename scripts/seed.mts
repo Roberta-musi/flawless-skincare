@@ -23,10 +23,10 @@ async function upload(key: string, file: string) {
   const meta = await sharp(input).rotate().metadata();
   for (const width of widths) {
     const body = await sharp(input).rotate().resize({ width, withoutEnlargement: false }).webp({ quality: 80 }).toBuffer();
-    await env.MEDIA.put(`${key}-${width}.webp`, body, { httpMetadata: { contentType: "image/webp" } });
+    await env.MEDIA.put(`${key}-${width}`, body, { httpMetadata: { contentType: "image/webp" } });
   }
   const og = await sharp(input).rotate().resize({ width: 1200, height: 630, fit: "cover" }).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
-  await env.MEDIA.put(`${key}-og.jpg`, og, { httpMetadata: { contentType: "image/jpeg" } });
+  await env.MEDIA.put(`${key}-og`, og, { httpMetadata: { contentType: "image/jpeg" } });
   const w = meta.autoOrient?.width ?? meta.width ?? 1;
   const h = meta.autoOrient?.height ?? meta.height ?? 1;
   return { key, width: 1600, height: Math.round((h / w) * 1600) };
