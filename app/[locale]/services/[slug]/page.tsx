@@ -10,7 +10,7 @@ import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { ButtonAnchor, ButtonLink } from "@/components/ui/button";
 import { Container, Eyebrow, Section, SectionHeading } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/prose";
-import { getServiceBySlug, getServices } from "@/lib/data/services";
+import { getServiceBySlug, getServices, serviceTranslatableFields } from "@/lib/data/services";
 import { getSettings } from "@/lib/data/site";
 import { interpolate, isTranslated, localized } from "@/lib/i18n/localized";
 import { localePath } from "@/lib/i18n/paths";
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/services
     title: localized(service, "seoTitle", locale) ?? name,
     description: localized(service, "seoDescription", locale) ?? localized(service, "shortDescription", locale),
     images: service.imageKey ? [{ url: ogImageUrl(service.imageKey), width: 1200, height: 630, alt: name }] : undefined,
-    translated: isTranslated(service, ["name", "shortDescription", "description", "whatToExpect", "preparation", "aftercare"]),
+    translated: isTranslated(service, serviceTranslatableFields),
   });
 }
 

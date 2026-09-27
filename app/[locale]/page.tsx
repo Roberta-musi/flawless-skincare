@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import {
   CategoriesSection,
@@ -16,6 +17,12 @@ import { getBrandProfile, getSettings } from "@/lib/data/site";
 import { localized } from "@/lib/i18n/localized";
 import { localePath } from "@/lib/i18n/paths";
 import { getI18n } from "@/lib/i18n/server";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, dict } = await getI18n();
+  return pageMetadata({ locale, path: "/", title: dict.meta.defaultTitle, description: dict.meta.defaultDescription, absoluteTitle: true });
+}
 
 export default async function HomePage() {
   const { locale, dict } = await getI18n();

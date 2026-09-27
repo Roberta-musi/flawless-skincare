@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
 import { BagDrawer } from "@/components/bag/bag-drawer";
+import { SiteJsonLd } from "@/components/seo/site-json-ld";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { WhatsAppBubble } from "@/components/site/whatsapp-bubble";
 import { getCatalog } from "@/lib/data/catalog";
-import { getSettings } from "@/lib/data/site";
+import { getBrandProfile, getSettings } from "@/lib/data/site";
 import { locales } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
 import { businessWhatsAppUrl, siteUrl } from "@/lib/site";
@@ -33,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LocaleLayout({ children }: LayoutProps<"/[locale]">) {
   const { locale, dict } = await getI18n();
-  const [settings, catalog] = await Promise.all([getSettings(), getCatalog()]);
+  const [settings, brand, catalog] = await Promise.all([getSettings(), getBrandProfile(), getCatalog()]);
   const whatsapp = businessWhatsAppUrl(settings, dict.whatsapp.messages.general);
 
   return (
@@ -56,6 +57,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
           whatsappNumber={normalizeWhatsAppNumber(settings.whatsapp)}
           dict={{ bag: dict.bag, whatsapp: dict.whatsapp, common: dict.common, product: dict.product, nav: dict.nav }}
         />
+        <SiteJsonLd settings={settings} brand={brand} catalog={catalog} description={dict.meta.defaultDescription} />
         <Toaster
           position="bottom-center"
           offset={{ bottom: 96 }}

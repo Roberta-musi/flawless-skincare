@@ -5,6 +5,8 @@ import { getDb } from "@/lib/db";
 import { reviews, services } from "@/lib/db/schema";
 import { tags } from "./tags";
 
+export const serviceTranslatableFields = ["name", "shortDescription", "description", "whatToExpect", "preparation", "aftercare"];
+
 export async function getServices() {
   "use cache";
   cacheTag(tags.services);

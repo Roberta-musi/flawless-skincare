@@ -14,7 +14,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/prose";
 import { Stars } from "@/components/ui/stars";
-import { getCatalog, getProductBySlug } from "@/lib/data/catalog";
+import { getCatalog, getProductBySlug, productTranslatableFields } from "@/lib/data/catalog";
 import { getSettings } from "@/lib/data/site";
 import { interpolate, isTranslated, localized } from "@/lib/i18n/localized";
 import { localePath } from "@/lib/i18n/paths";
@@ -24,8 +24,6 @@ import { pageMetadata } from "@/lib/seo";
 import { businessWhatsAppUrl, siteUrl } from "@/lib/site";
 import { absoluteUrl, productJsonLd, ratingSummary } from "@/lib/structured-data";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp";
-
-const translatableFields = ["name", "shortDescription", "description", "howToUse", "keyIngredients"];
 
 export async function generateStaticParams() {
   const catalog = await getCatalog();
@@ -44,7 +42,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/products
     title: localized(product, "seoTitle", locale) ?? name,
     description: localized(product, "seoDescription", locale) ?? localized(product, "shortDescription", locale),
     images: image ? [{ url: ogImageUrl(image.key), width: 1200, height: 630, alt: name }] : undefined,
-    translated: isTranslated(product, translatableFields),
+    translated: isTranslated(product, productTranslatableFields),
   });
 }
 

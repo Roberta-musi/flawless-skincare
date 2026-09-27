@@ -103,7 +103,6 @@ export function businessJsonLd(input: {
 }) {
   const sameAs = Object.values(input.socials).filter(Boolean);
   return {
-    "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
     "@id": `${input.url}/#business`,
     name: input.name,

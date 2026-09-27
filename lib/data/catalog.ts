@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { getDb } from "@/lib/db";
+import { isTranslated } from "@/lib/i18n/localized";
 import {
   categories,
   concerns,
@@ -14,6 +15,8 @@ import {
   skinTypes,
 } from "@/lib/db/schema";
 import { tags } from "./tags";
+
+export const productTranslatableFields = ["name", "shortDescription", "description", "benefits", "howToUse", "keyIngredients"];
 
 const summaryWith = {
   variants: { orderBy: [asc(productVariants.sortOrder)] },
@@ -44,6 +47,8 @@ function toSummary(p: SummarySource) {
     isNew: p.isNew,
     sortOrder: p.sortOrder,
     createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
+    translated: isTranslated(p, productTranslatableFields),
     image: p.images[0] ?? null,
     variants: p.variants,
     concernIds: p.concerns.map((c) => c.concernId),
