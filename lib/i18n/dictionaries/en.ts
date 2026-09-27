@@ -144,6 +144,7 @@ const en = {
     clear: "Clear filters",
     filters: "Filters",
     showResults: "Show {count} results",
+    showResultsOne: "Show 1 result",
     categoryEmpty: "We're updating this category. Ask us on WhatsApp and we'll tell you what's available.",
   },
   product: {

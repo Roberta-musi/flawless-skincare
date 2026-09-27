@@ -151,6 +151,7 @@ const fr: Dictionary = {
     clear: "Effacer les filtres",
     filters: "Filtres",
     showResults: "Voir {count} résultats",
+    showResultsOne: "Voir 1 résultat",
     categoryEmpty: "Cette catégorie est en cours de mise à jour. Demandez-nous sur WhatsApp ce qui est disponible.",
   },
   product: {
