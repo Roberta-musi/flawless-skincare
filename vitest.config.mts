@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    setupFiles: ["tests/support/setup.ts"],
     include: ["**/*.test.ts"],
     exclude: ["node_modules/**", "e2e/**", ".open-next/**", ".next/**"],
   },
