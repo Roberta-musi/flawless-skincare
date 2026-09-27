@@ -21,7 +21,14 @@ import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, dict } = await getI18n();
-  return pageMetadata({ locale, path: "/", title: dict.meta.defaultTitle, description: dict.meta.defaultDescription, absoluteTitle: true });
+  const settings = await getSettings();
+  return pageMetadata({
+    locale,
+    path: "/",
+    title: localized(settings, "seoTitle", locale) ?? dict.meta.defaultTitle,
+    description: localized(settings, "seoDescription", locale) ?? dict.meta.defaultDescription,
+    absoluteTitle: true,
+  });
 }
 
 export default async function HomePage() {
