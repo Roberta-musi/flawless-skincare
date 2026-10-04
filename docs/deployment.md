@@ -58,7 +58,7 @@ This also adds the default business settings and the privacy, booking-policy and
 npm run admin:create -- --email owner@example.com --name "Owner Name" --remote
 ```
 
-It asks for a password of at least 10 characters. There's no public sign-up page: further admin accounts are created with this same command (`--role manager` for staff).
+It asks for a password of at least 10 characters. There's no public sign-up page. After this first account, the owner adds staff, changes roles, sets new passwords and removes people from **Team** in the admin panel. Everyone changes their own password under **My account**. Run the command again only to recover a locked-out owner: it resets that person's password.
 
 ## 5. Set up the spam check (Turnstile)
 

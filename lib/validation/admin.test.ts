@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { slugify } from "@/lib/slug";
-import { fieldErrors, productSchema, settingsSchema } from "./admin";
+import { fieldErrors, passwordChangeSchema, productSchema, settingsSchema, teamMemberSchema } from "./admin";
 
 const product = {
   slug: "body-butter",
@@ -81,5 +81,20 @@ describe("settingsSchema", () => {
     const result = settingsSchema.safeParse({ ...settings, whatsapp: "6732", openingHours: [{ opens: "18:00", closes: "09:00" }, null, null, null, null, null, null] });
     expect(result.success).toBe(false);
     if (!result.success) expect(Object.keys(fieldErrors(result.error)).sort()).toEqual(["openingHours", "whatsapp"]);
+  });
+});
+
+describe("team schemas", () => {
+  it("normalises emails and requires a 10-character password", () => {
+    expect(teamMemberSchema.parse({ name: "Ada", email: "  Ada@Flawless.TEST ", role: "manager", password: "0123456789" }).email).toBe("ada@flawless.test");
+    const result = teamMemberSchema.safeParse({ name: "", email: "nope", role: "admin", password: "short" });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(Object.keys(fieldErrors(result.error)).sort()).toEqual(["email", "name", "password", "role"]);
+  });
+
+  it("checks the new password is typed twice", () => {
+    const result = passwordChangeSchema.safeParse({ currentPassword: "old", newPassword: "0123456789", confirm: "0123456788" });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(fieldErrors(result.error)).toEqual({ confirm: "The two passwords don't match" });
   });
 });

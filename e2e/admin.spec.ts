@@ -61,3 +61,53 @@ test("a product edit shows on the public site", async ({ page }) => {
   await expect(page.getByText(original)).toBeVisible();
   await expect(page.getByText(marker)).toHaveCount(0);
 });
+
+test("the owner manages the team and a manager runs their own account", async ({ browser, page }) => {
+  const manager = { name: "E2E Manager", email: `manager-${Date.now()}@flawless.test`, password: "manager-pass-1", next: "manager-pass-2" };
+  await signIn(page, "/admin/team");
+
+  await expect(async () => {
+    await page.getByRole("button", { name: "Add" }).click();
+    await expect(page.getByRole("dialog", { name: "Add a team member" })).toBeVisible({ timeout: 1_000 });
+  }).toPass();
+  const form = page.getByRole("dialog", { name: "Add a team member" });
+  await form.getByLabel("Full name").fill(manager.name);
+  await form.getByLabel("Email").fill(manager.email);
+  await form.getByLabel("First password").fill(manager.password);
+  await form.getByRole("button", { name: "Add to team" }).click();
+  await expect(page.getByText(`${manager.name} can now sign in at /admin.`)).toBeVisible();
+  await expect(page.getByRole("button", { name: new RegExp(manager.email) })).toContainText("manager");
+
+  const staff = await (await browser.newContext()).newPage();
+  await staff.goto("/admin/login");
+  await staff.getByLabel("Email").fill(manager.email);
+  await staff.getByLabel("Password").fill(manager.password);
+  await staff.getByRole("button", { name: "Sign in" }).click();
+  await expect(staff).toHaveURL("/admin");
+  await expect(staff.getByRole("link", { name: "Team" })).toHaveCount(0);
+  await staff.goto("/admin/team");
+  await expect(staff).toHaveURL("/admin");
+
+  await staff.goto("/admin/account");
+  await expect(async () => {
+    await staff.getByLabel("Current password").fill("wrong-password");
+    await staff.getByLabel("New password", { exact: true }).fill(manager.next);
+    await staff.getByLabel("New password again").fill(manager.next);
+    await staff.getByRole("button", { name: "Change password" }).click();
+    await expect(staff.getByText("That isn't your current password.")).toBeVisible({ timeout: 2_000 });
+  }).toPass();
+  await staff.getByLabel("Current password").fill(manager.password);
+  await staff.getByRole("button", { name: "Change password" }).click();
+  await expect(staff.getByText("Password changed. Any other devices were signed out.")).toBeVisible();
+  await staff.reload();
+  await expect(staff).toHaveURL("/admin/account");
+
+  await page.getByRole("button", { name: new RegExp(manager.email) }).click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Remove from team" }).click();
+  await expect(page.getByText(`${manager.name} was removed from the team.`)).toBeVisible();
+  await expect(page.getByRole("button", { name: new RegExp(manager.email) })).toHaveCount(0);
+
+  await staff.goto("/admin");
+  await expect(staff).toHaveURL("/admin/login");
+});

@@ -14,6 +14,8 @@ import {
   Store,
   Tags,
   UserRound,
+  UserRoundCog,
+  UsersRound,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,6 +26,7 @@ import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/cn";
 
 type Counts = { pendingBookings: number; pendingReviews: number; unreadMessages: number };
+type User = { name: string; email: string; role: "owner" | "manager" };
 
 const sections = [
   {
@@ -51,6 +54,13 @@ const sections = [
       { href: "/admin/content", label: "FAQ & pages", icon: CircleHelp },
     ],
   },
+  {
+    label: "Account",
+    items: [
+      { href: "/admin/team", label: "Team", icon: UsersRound, ownerOnly: true },
+      { href: "/admin/account", label: "My account", icon: UserRoundCog },
+    ],
+  },
 ] as const;
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -62,7 +72,7 @@ function Badge({ value }: { value: number }) {
   return <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-fuchsia px-1.5 text-[10px] leading-5 font-semibold text-white">{value}</span>;
 }
 
-function NavList({ counts, dark, onNavigate }: { counts: Counts; dark?: boolean; onNavigate?: () => void }) {
+function NavList({ counts, role, dark, onNavigate }: { counts: Counts; role: User["role"]; dark?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <nav className="flex flex-col gap-7" aria-label="Admin">
@@ -72,6 +82,7 @@ function NavList({ counts, dark, onNavigate }: { counts: Counts; dark?: boolean;
             {section.label}
           </p>
           {section.items.map((item) => {
+            if ("ownerOnly" in item && role !== "owner") return null;
             const active = isActive(pathname, item.href, "exact" in item ? item.exact : false);
             const Icon = item.icon;
             return (
@@ -103,7 +114,7 @@ function NavList({ counts, dark, onNavigate }: { counts: Counts; dark?: boolean;
   );
 }
 
-function AccountFooter({ user, dark }: { user: { name: string; email: string }; dark?: boolean }) {
+function AccountFooter({ user, dark, onNavigate }: { user: User; dark?: boolean; onNavigate?: () => void }) {
   return (
     <div className={cn("flex flex-col gap-3 border-t pt-5", dark ? "border-ivory/10" : "border-line")}>
       <Link
@@ -115,10 +126,10 @@ function AccountFooter({ user, dark }: { user: { name: string; email: string }; 
         View website
       </Link>
       <div className="flex items-center justify-between gap-2 px-3">
-        <div className="min-w-0">
+        <Link href="/admin/account" onClick={onNavigate} className="min-w-0" title="My account">
           <p className={cn("truncate text-sm font-medium", dark ? "text-ivory" : "text-plum")}>{user.name}</p>
           <p className={cn("truncate text-xs", dark ? "text-ivory/50" : "text-muted")}>{user.email}</p>
-        </div>
+        </Link>
         <form action={signOut}>
           <button
             type="submit"
@@ -134,21 +145,21 @@ function AccountFooter({ user, dark }: { user: { name: string; email: string }; 
   );
 }
 
-export function AdminSidebar({ counts, user }: { counts: Counts; user: { name: string; email: string } }) {
+export function AdminSidebar({ counts, user }: { counts: Counts; user: User }) {
   return (
     <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto bg-plum px-4 py-7 lg:flex">
       <Link href="/admin" className="px-3">
         <Logo light eager className="w-28 md:w-28" />
       </Link>
       <div className="flex-1">
-        <NavList counts={counts} dark />
+        <NavList counts={counts} role={user.role} dark />
       </div>
       <AccountFooter user={user} dark />
     </aside>
   );
 }
 
-export function AdminMobileNav({ counts, user }: { counts: Counts; user: { name: string; email: string } }) {
+export function AdminMobileNav({ counts, user }: { counts: Counts; user: User }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const tabs = [
@@ -206,9 +217,9 @@ export function AdminMobileNav({ counts, user }: { counts: Counts; user: { name:
       <Sheet open={open} onClose={() => setOpen(false)} side="left" label="Admin menu" closeLabel="Close menu" header={<Logo eager className="w-24 md:w-24" />}>
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-6">
           <div className="flex-1">
-            <NavList counts={counts} onNavigate={() => setOpen(false)} />
+            <NavList counts={counts} role={user.role} onNavigate={() => setOpen(false)} />
           </div>
-          <AccountFooter user={user} />
+          <AccountFooter user={user} onNavigate={() => setOpen(false)} />
         </div>
       </Sheet>
     </>

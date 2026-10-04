@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { contentPageSlugs, faqs } from "@/lib/db/schema";
+import { contentPageSlugs, faqs, user } from "@/lib/db/schema";
 import { slugPattern } from "@/lib/slug";
 
 const optionalText = z
@@ -220,6 +220,29 @@ export const contentPageSchema = z.object({
 });
 
 export type ContentPageInput = z.infer<typeof contentPageSchema>;
+
+const email = z.string().trim().toLowerCase().pipe(z.email({ error: "Enter a valid email" }));
+const password = z.string().min(10, { error: "Use at least 10 characters" }).max(128, { error: "Too long" });
+
+export const teamMemberUpdateSchema = z.object({
+  name: requiredText(80),
+  email,
+  role: z.enum(user.role.enumValues),
+});
+
+export type TeamMemberUpdate = z.infer<typeof teamMemberUpdateSchema>;
+
+export const teamMemberSchema = teamMemberUpdateSchema.extend({ password });
+
+export type TeamMemberInput = z.infer<typeof teamMemberSchema>;
+
+export const passwordSchema = z.object({ password });
+
+export const nameSchema = z.object({ name: requiredText(80) });
+
+export const passwordChangeSchema = z
+  .object({ currentPassword: z.string().min(1, { error: "Required" }).max(128), newPassword: password, confirm: z.string() })
+  .refine((v) => v.newPassword === v.confirm, { error: "The two passwords don't match", path: ["confirm"] });
 
 export function fieldErrors(error: z.ZodError) {
   const errors: Record<string, string> = {};

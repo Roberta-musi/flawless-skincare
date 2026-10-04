@@ -52,6 +52,8 @@ async function createAuth() {
 
 export const getAuth = cache(createAuth);
 
+export type AdminRole = (typeof user.role.enumValues)[number];
+
 export const getAdminSession = cache(async () => {
   // Request headers first: Better Auth's setup uses randomness, which Next.js refuses during prerendering.
   const requestHeaders = await headers();
@@ -60,7 +62,7 @@ export const getAdminSession = cache(async () => {
   if (!result) return null;
   const role = (result.user as { role?: string }).role;
   if (role !== "owner" && role !== "manager") return null;
-  return { user: { id: result.user.id, name: result.user.name, email: result.user.email, role } };
+  return { user: { id: result.user.id, name: result.user.name, email: result.user.email, role: role as AdminRole } };
 });
 
 export async function requireAdmin() {

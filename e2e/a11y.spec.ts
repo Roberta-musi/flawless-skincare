@@ -60,6 +60,8 @@ const adminPages = [
   "/admin/settings",
   "/admin/profile",
   "/admin/content",
+  "/admin/team",
+  "/admin/account",
 ];
 
 test.describe("admin", () => {
