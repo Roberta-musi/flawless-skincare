@@ -1,7 +1,4 @@
-import { execFileSync } from "node:child_process";
-import { rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { createClient } from "@libsql/client";
 import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
 import { hashPassword } from "../lib/auth/password.ts";
@@ -11,12 +8,11 @@ const { values } = parseArgs({
     email: { type: "string" },
     name: { type: "string" },
     role: { type: "string", default: "owner" },
-    remote: { type: "boolean", default: false },
   },
 });
 
 if (!values.email || !values.name || !["owner", "manager"].includes(values.role!)) {
-  console.error('Usage: npm run admin:create -- --email you@example.com --name "Full Name" [--role owner|manager] [--remote]');
+  console.error('Usage: npm run admin:create -- --email you@example.com --name "Full Name" [--role owner|manager]');
   process.exit(1);
 }
 
@@ -46,14 +42,8 @@ SELECT ${sql(crypto.randomUUID())}, id, 'credential', id, ${sql(hash)}, ${now}, 
 DELETE FROM session WHERE user_id = (SELECT id FROM user WHERE email = ${sql(email)});
 `;
 
-const file = join(tmpdir(), `flawless-admin-${now}.sql`);
-writeFileSync(file, statements);
-try {
-  execFileSync("npx", ["wrangler", "d1", "execute", "DB", values.remote ? "--remote" : "--local", `--file=${file}`], {
-    stdio: "inherit",
-    shell: process.platform === "win32",
-  });
-  console.log(`\n${values.role === "owner" ? "Owner" : "Manager"} account ready for ${email} (${values.remote ? "production" : "local"} database).`);
-} finally {
-  rmSync(file, { force: true });
-}
+const databasePath = process.env.DATABASE_PATH ?? "data/flawless.db";
+const client = createClient({ url: `file:${databasePath}` });
+await client.executeMultiple(`BEGIN;${statements}COMMIT;`);
+client.close();
+console.log(`\n${values.role === "owner" ? "Owner" : "Manager"} account ready for ${email} in ${databasePath}.`);

@@ -1,166 +1,134 @@
 # Deploying Flawless Skin Care
 
-The whole site runs as one Cloudflare Worker. It uses these Cloudflare resources:
+The site runs as a Node.js app on the UniBHost **StartUp** plan (cPanel, server `s10701.lon1.stableserver.net`, user `musirobe`), at `flawless-skincare.com`. Everything lives in the hosting account's home folder:
 
-| Resource | Name | Holds |
+| Folder | Holds | Replaced on deploy? |
 |---|---|---|
-| D1 database | `flawless` | Products, services, bookings, reviews, messages, settings, admin accounts |
-| D1 database | `flawless-tag-cache` | Markers that tell the Worker which cached pages an admin edit made stale |
-| R2 bucket | `flawless-media` | Product, service and brand photos |
-| R2 bucket | `flawless-next-cache` | Pre-rendered pages |
-| R2 bucket | `flawless-backups` | Weekly database exports. Not connected to the Worker, so the site can't read or change them |
+| `~/flawlessskincarewebsite` | The built site (`app.js`, `server.js`, `node_modules`, …) | Yes, every time |
+| `~/flawless-data/flawless.db` | The database: products, services, bookings, reviews, messages, settings, admin accounts | Never |
+| `~/flawless-data/media` | Product, service and brand photos uploaded from the admin panel | Never |
+| `~/flawless-data/backups` | Weekly copies of the database (step 7) | Never |
 
-Commands below run from the project folder in a terminal (PowerShell is fine). Steps 1–7 are needed once; after that, deploying is step 7 again.
+`app.js` brings the database up to date (it applies any new files in `drizzle/`) and then starts the site. Pages are rendered on each visit straight from the database, so the owner's edits show immediately and the build never needs the live data.
+
+Commands below run from the project folder on your computer, in PowerShell. Steps 1–6 are needed once. After that, deploying is step 5 again.
 
 ## Before you start
 
-- **A Cloudflare account** (free) and **the domain on Cloudflare DNS**. Cloudflare Registrar can't register `.cm` domains, so buy those from a local registrar and change the domain's nameservers to the two Cloudflare gives you when you add the site.
-- **A Resend account** (free tier), with the domain added and its DNS records created. Notification emails are sent from this domain.
-- **Node.js 22**, then `npm ci`.
+- **Node.js 22** on your computer, then `npm ci`.
+- **A Resend account** (free tier), with `flawless-skincare.com` added and its DNS records created in cPanel → **Zone Editor**. Notification and password-reset emails are sent from this domain.
+- **A Cloudflare account** (free) for the Turnstile spam check only. The site itself does not run on Cloudflare.
 
-## 1. Sign in to Cloudflare
+## 1. Set up the spam check (Turnstile)
 
-```bash
-npx wrangler login
-```
+In the Cloudflare dashboard, open **Turnstile → Add widget**. Add `flawless-skincare.com` and `www.flawless-skincare.com` as hostnames and choose the **Managed** mode. Put the site key in `.env.deploy` (step 5). Keep the secret key for step 2.
 
-## 2. Create the databases and buckets
+## 2. Configure the Node.js app
 
-Western Europe is the closest Cloudflare storage region to Cameroon.
+In cPanel, open **Setup Node.js App** and edit the `flawless-skincare.com` app (create it if it's missing):
 
-```bash
-npx wrangler d1 create flawless --location weur
-npx wrangler d1 create flawless-tag-cache --location weur
-npx wrangler r2 bucket create flawless-media --location weur
-npx wrangler r2 bucket create flawless-next-cache --location weur
-npx wrangler r2 bucket create flawless-backups --location weur
-npx wrangler r2 bucket lifecycle add flawless-backups expire-old-backups d1/ --expire-days 90
-```
-
-Each `d1 create` prints a `database_id`. Put these IDs into `wrangler.jsonc`, replacing the `00000000-…` placeholders:
-
-- The `flawless` ID goes in **two** places: the `DB` binding at the top, and the `DB` binding under `env.prerender`.
-- The `flawless-tag-cache` ID goes in the `NEXT_TAG_CACHE_D1` binding.
-
-Commit that change.
-
-## 3. Create the tables
-
-```bash
-npm run db:migrate:remote
-```
-
-This also adds the default business settings and the privacy, booking-policy and returns pages. The owner edits all of them from the admin panel.
-
-## 4. Create the owner's admin account
-
-```bash
-npm run admin:create -- --email owner@example.com --name "Owner Name" --remote
-```
-
-It asks for a password of at least 10 characters. There's no public sign-up page. After this first account, the owner adds staff, changes roles, sets new passwords and removes people from **Team** in the admin panel. Everyone changes their own password under **My account**. Run the command again only to recover a locked-out owner: it resets that person's password.
-
-## 5. Set up the spam check (Turnstile)
-
-In the Cloudflare dashboard, open **Turnstile → Add widget**. Add the domain (with and without `www`) as hostnames and choose the **Managed** mode. Keep the site key for step 7 and the secret key for step 6.
-
-## 6. Set the secrets
-
-```bash
-npx wrangler secret put BETTER_AUTH_SECRET
-npx wrangler secret put RESEND_API_KEY
-npx wrangler secret put EMAIL_FROM
-npx wrangler secret put NOTIFY_EMAIL
-npx wrangler secret put TURNSTILE_SECRET_KEY
-```
-
-| Secret | Value |
+| Setting | Value |
 |---|---|
-| `BETTER_AUTH_SECRET` | A new random value, e.g. from `openssl rand -hex 32`. Don't reuse the one in `.env.local` |
+| Node.js version | 20 or newer (the highest offered) |
+| Application mode | Production |
+| Application root | `flawlessskincarewebsite` |
+| Application URL | `flawless-skincare.com` |
+| Application startup file | `app.js` |
+
+Under **Environment variables**, add:
+
+| Name | Value |
+|---|---|
+| `BETTER_AUTH_SECRET` | A new random value of 64 characters, e.g. from `openssl rand -hex 32`. Don't reuse the one in `.env.local` |
 | `RESEND_API_KEY` | From Resend → API keys |
-| `EMAIL_FROM` | e.g. `Flawless Skin Care <notifications@your-domain>`, on the domain verified in Resend |
+| `EMAIL_FROM` | e.g. `Flawless Skin Care <notifications@flawless-skincare.com>` |
 | `NOTIFY_EMAIL` | The inbox that receives booking, review and message alerts |
-| `TURNSTILE_SECRET_KEY` | From step 5 |
+| `TURNSTILE_SECRET_KEY` | From step 1 |
 
-If Wrangler says the Worker doesn't exist yet and offers to create it, answer yes.
+Save. Don't press **Run NPM Install**: the uploaded bundle already contains everything it needs.
 
-The build copies `.env.local` into the Worker as fallback values, and Worker secrets always take priority over them. So set every secret above, and never put production secrets in `.env.local`.
+`DATABASE_PATH` and `MEDIA_DIR` are optional; they default to the `~/flawless-data` paths above.
 
-## 7. Deploy
+## 3. Prepare the starting data
 
-Fill in `.env.deploy`:
+`initial-data/flawless-data` (not in git) holds the shop as it is today: the 14 products, 5 categories, 3 services, FAQs, policies, business settings, brand profile and all their photos. The test admin, test booking and test review from local development are not in it.
+
+Create the owner's admin account in it. You'll be asked for a password of at least 10 characters:
+
+```powershell
+$env:DATABASE_PATH = "initial-data/flawless-data/flawless.db"; npm run admin:create -- --email owner@example.com --name "Owner Name"; Remove-Item Env:DATABASE_PATH
+```
+
+Then zip it:
+
+```powershell
+Compress-Archive -Path initial-data/flawless-data -DestinationPath initial-data.zip -Force
+```
+
+There's no public sign-up page. After this first account, the owner adds staff, changes roles, sets new passwords and removes people from **Team** in the admin panel, and everyone changes their own password under **My account**.
+
+## 4. Upload the starting data (once only)
+
+In cPanel → **File Manager**, open your home folder (`/home/musirobe`), **Upload** `initial-data.zip`, then right-click it → **Extract** into `/home/musirobe`. You should now have `/home/musirobe/flawless-data/flawless.db` and `/home/musirobe/flawless-data/media`. Delete `initial-data.zip`.
+
+Never do this again once the site is live: it would overwrite the live database with the starting copy.
+
+## 5. Deploy
+
+`.env.deploy` holds the public values baked into the build (commit it):
 
 ```
-NEXT_PUBLIC_SITE_URL=https://www.your-domain
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=<site key from step 5>
+NEXT_PUBLIC_SITE_URL=https://flawless-skincare.com
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=<site key from step 1>
 ```
 
-These are public values, so commit the file. Then:
+Then:
 
 ```bash
 npm run deploy
 ```
 
-`npm run deploy` builds the site with pages pre-rendered from the **live** database (the `prerender` environment in `wrangler.jsonc`), then uploads the Worker and the cached pages.
+This builds the site and writes `deploy.zip` (about 15 MB). It already contains the Linux build of the database engine the server needs.
 
-- Wrangler warns that `env.prerender` lacks the other bindings. That is expected: the build only needs the database.
-- The first deploy prints a `*.workers.dev` address to check the site on.
+**Uploading with File Manager:**
 
-After this, the owner's edits in the admin panel update the site by themselves. A new deploy is only needed for code changes.
+1. Open `/home/musirobe/flawlessskincarewebsite` and delete everything in it, including the hidden `.next` folder (turn on **Settings → Show Hidden Files**).
+2. **Upload** `deploy.zip`, right-click it → **Extract** into that folder, then delete `deploy.zip`.
+3. In **Setup Node.js App**, press **Restart** on the app.
 
-## 8. Connect the domain
+**Or over SSH**, which does all of that for you: in cPanel → **SSH Access → Manage SSH Keys**, import your computer's public key (`~/.ssh/id_ed25519.pub`) and authorise it. Then uncomment the `DEPLOY_SSH…` lines in `.env.deploy`. From then on `npm run deploy` uploads, unpacks and restarts the app itself.
 
-Add this to `wrangler.jsonc`, with the real domain:
+Open https://flawless-skincare.com and sign in at `/admin`. If the site shows an error page, open **Setup Node.js App**: the app's log file (`stderr.log` in the app folder) says why.
 
-```jsonc
-"workers_dev": false,
-"preview_urls": false,
-"routes": [
-  { "pattern": "www.your-domain", "custom_domain": true },
-  { "pattern": "your-domain", "custom_domain": true }
-]
+After this, the owner's edits in the admin panel update the site immediately. A new deploy is only needed for code changes.
+
+## 6. Use one address
+
+In cPanel → **Domains**, turn on **Force HTTPS Redirect** for `flawless-skincare.com`. Search engines should only see `https://flawless-skincare.com`; if `www.` also loads the site, add a redirect from `www.flawless-skincare.com` to it under **Redirects**.
+
+## 7. Turn on the weekly backup
+
+In cPanel → **Cron Jobs**, add a job that runs once a week (e.g. **Once Per Week**) with this command. The path to `node` is the one shown at the top of the Node.js app page, in the "Enter to the virtual environment" line; `20` is the Node.js version.
+
+```bash
+/home/musirobe/nodevenv/flawlessskincarewebsite/20/bin/node /home/musirobe/flawlessskincarewebsite/scripts/backup.cjs
 ```
 
-Run `npm run deploy` again. Then, in the dashboard under **Rules → Redirect Rules**, create a rule from the template **Redirect from root to WWW**.
+It saves `~/flawless-data/backups/flawless-YYYY-MM-DD.db` and deletes copies older than 90 days. Photos are covered by the hosting plan's own backups (cPanel → **Backup**); download a full backup every few months as well.
 
-- `workers_dev: false` removes the `workers.dev` copy of the site, so Google only ever sees one address.
-- Photos keep loading through the site's own `/media/…` path. A separate public R2 domain (`NEXT_PUBLIC_MEDIA_URL`) is optional.
+**Restoring:** in **Setup Node.js App**, stop the app. In File Manager, copy the backup over `~/flawless-data/flawless.db` and delete `flawless.db-wal` and `flawless.db-shm` next to it if they exist. Start the app again.
 
-## 9. Turn on the weekly backup
+**Locked-out owner:** use **Forgot password** on the sign-in page (needs Resend set up). Otherwise stop the app, download `flawless.db`, run step 3's `admin:create` command against the downloaded file, upload it back and start the app.
 
-In the GitHub repository, open **Settings → Secrets and variables → Actions** and add two secrets:
+## 8. Get found on Google
 
-- `CLOUDFLARE_ACCOUNT_ID` — shown on the right of the Cloudflare dashboard's home page.
-- `CLOUDFLARE_API_TOKEN` — a token from **My Profile → API Tokens → Create token → Custom token** with these account permissions:
-  - D1: Edit
-  - Workers R2 Storage: Edit
-
-Then run **Actions → Back up database → Run workflow** once to check it. It then runs every Monday at 02:00 UTC, and stores `d1/flawless-YYYY-MM-DD.sql.gz` in `flawless-backups`. The lifecycle rule from step 2 deletes backups after 90 days.
-
-**Restoring.**
-
-- **A mistake in the last few days:** use D1 Time Travel. It keeps 7 days on the free plan and 30 days on Workers Paid.
-  ```bash
-  npx wrangler d1 time-travel restore flawless --timestamp 2026-10-01T09:00:00Z
-  ```
-- **Anything older:** download the backup from R2, unzip it, create a new database, and load it with `npx wrangler d1 execute <new-database> --remote --file flawless-….sql`. Then point `wrangler.jsonc` at the new database and deploy.
-
-## 10. Get found on Google
-
-- **Google Search Console.** Add a *Domain* property and verify it with the TXT record Search Console gives you (add it in Cloudflare DNS). Then submit `https://www.your-domain/sitemap.xml`.
+- **Google Search Console.** Add a *Domain* property and verify it with the TXT record Search Console gives you (add it in cPanel → **Zone Editor**). Then submit `https://flawless-skincare.com/sitemap.xml`.
 - **Bing Webmaster Tools.** Import the site from Search Console.
 - **Google Business Profile.** This is what shows the business on Maps and in "skincare Limbe" searches.
   - Use exactly the same name, address and phone as in the admin panel's business settings.
   - Add the website address, the opening hours and photos.
   - Ask happy customers for Google reviews.
-- **Cloudflare Web Analytics** (optional, cookieless): **Analytics & Logs → Web Analytics → Add a site**.
 
-## Plan limits and costs
+## Plan limits
 
-| Service | Free plan | Enough? |
-|---|---|---|
-| Workers | 100,000 requests/day, **10 ms CPU per request**, 3 MB compressed Worker (this one is about 2.3 MB) | Requests yes; CPU is tight |
-| D1 | 5 GB, 5 million rows read and 100,000 written per day | Yes, many times over |
-| R2 | 10 GB stored, 1 million writes and 10 million reads per month | Yes |
-
-Cached pages are served cheaply. Rendering a page after an edit, and every admin page, can take more than 10 ms of CPU, which on the free plan fails with error 1102. **Switch to Workers Paid ($5/month) before launch.** It raises the CPU limit to 30 seconds and the Worker size limit to 10 MB. It also extends D1 Time Travel to 30 days. Development and testing fit on the free plan.
+The StartUp plan is shared hosting: one website, 15 GB of disk, and CPU and memory limits shared with other customers on the server. The site needs roughly 150–250 MB of memory while running. cPanel → **Resource Usage** shows whether the account hits its limits; if pages get slow or the app is stopped for using too much memory, move to the **Grow** plan or a VPS. The deploy works the same way on either.

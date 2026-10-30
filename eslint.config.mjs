@@ -10,6 +10,11 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true }],
     },
   },
+  {
+    // Run directly by Node on the server, before any build step.
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
@@ -17,7 +22,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    "cloudflare-env.d.ts",
+    "deploy/**",
+    // Left over from the Cloudflare setup.
     ".open-next/**",
     ".wrangler/**",
   ]),

@@ -23,10 +23,10 @@ export async function POST(request: Request) {
   const key = `${folder}/${crypto.randomUUID()}`;
   const [small, medium, large, og] = files as File[];
   await Promise.all([
-    putMedia(variantKey(key, 400), await small.arrayBuffer(), small.type),
-    putMedia(variantKey(key, 800), await medium.arrayBuffer(), medium.type),
-    putMedia(variantKey(key, 1600), await large.arrayBuffer(), large.type),
-    putMedia(ogKey(key), await og.arrayBuffer(), og.type),
+    putMedia(variantKey(key, 400), await small.arrayBuffer()),
+    putMedia(variantKey(key, 800), await medium.arrayBuffer()),
+    putMedia(variantKey(key, 1600), await large.arrayBuffer()),
+    putMedia(ogKey(key), await og.arrayBuffer()),
   ]);
   return Response.json({ key, width, height });
 }

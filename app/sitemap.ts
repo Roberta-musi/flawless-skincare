@@ -5,6 +5,8 @@ import { isTranslated } from "@/lib/i18n/localized";
 import { siteUrl } from "@/lib/site";
 import { buildSitemap } from "@/lib/sitemap";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [catalog, services] = await Promise.all([getCatalog(), getServices()]);
   const staticPages = ["/", "/shop", "/services", "/about", "/reviews", "/contact", "/faq", "/book", "/privacy", "/booking-policy", "/returns"];

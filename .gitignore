@@ -19,10 +19,18 @@ npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# cloudflare
+# local database and uploaded images
+/data/
+
+# deploy bundle and the one-off starting data for the server
+/deploy/
+/deploy.zip
+/initial-data/
+/initial-data.zip
+
+# left over from the Cloudflare setup
 .open-next/
 .wrangler/
-.dev.vars
 
 # playwright
 /test-results/

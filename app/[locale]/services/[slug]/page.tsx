@@ -21,11 +21,6 @@ import { serviceDurationLabel, servicePriceLabel } from "@/lib/services";
 import { businessWhatsAppUrl, siteUrl } from "@/lib/site";
 import { serviceJsonLd } from "@/lib/structured-data";
 
-export async function generateStaticParams() {
-  const services = await getServices();
-  return services.map((s) => ({ slug: s.slug }));
-}
-
 export async function generateMetadata({ params }: PageProps<"/[locale]/services/[slug]">): Promise<Metadata> {
   const { locale } = await getI18n();
   const service = await getServiceBySlug((await params).slug);

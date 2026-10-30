@@ -1,17 +1,12 @@
 import "server-only";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { eq, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { brandProfile, categories, productImages, services, settings } from "@/lib/db/schema";
+import { deleteMediaFiles, writeMediaFile } from "./files";
 import { allVariantKeys } from "./url";
 
-async function bucket() {
-  const { env } = await getCloudflareContext({ async: true });
-  return env.MEDIA;
-}
-
-export async function putMedia(key: string, body: ArrayBuffer, contentType: string) {
-  await (await bucket()).put(key, body, { httpMetadata: { contentType, cacheControl: "public, max-age=31536000, immutable" } });
+export async function putMedia(key: string, body: ArrayBuffer) {
+  await writeMediaFile(key, body);
 }
 
 export async function deleteUnreferencedMedia(keys: string[]) {
@@ -27,5 +22,5 @@ export async function deleteUnreferencedMedia(keys: string[]) {
   ]);
   const inUse = new Set([...images, ...cats, ...svc, ...site, ...brand].map((row) => row.key));
   const orphaned = unique.filter((key) => !inUse.has(key));
-  if (orphaned.length) await (await bucket()).delete(orphaned.flatMap(allVariantKeys));
+  if (orphaned.length) await deleteMediaFiles(orphaned.flatMap(allVariantKeys));
 }

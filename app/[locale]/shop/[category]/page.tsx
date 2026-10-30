@@ -13,11 +13,6 @@ import { getI18n } from "@/lib/i18n/server";
 import { pageMetadata } from "@/lib/seo";
 import { businessWhatsAppUrl } from "@/lib/site";
 
-export async function generateStaticParams() {
-  const catalog = await getCatalog();
-  return catalog.categories.map((c) => ({ category: c.slug }));
-}
-
 async function findCategory(slug: string) {
   const catalog = await getCatalog();
   const category = catalog.categories.find((c) => c.slug === slug);

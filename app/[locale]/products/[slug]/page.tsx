@@ -14,7 +14,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/prose";
 import { Stars } from "@/components/ui/stars";
-import { getCatalog, getProductBySlug, productTranslatableFields } from "@/lib/data/catalog";
+import { getProductBySlug, productTranslatableFields } from "@/lib/data/catalog";
 import { getSettings } from "@/lib/data/site";
 import { interpolate, isTranslated, localized } from "@/lib/i18n/localized";
 import { localePath } from "@/lib/i18n/paths";
@@ -24,11 +24,6 @@ import { pageMetadata } from "@/lib/seo";
 import { businessWhatsAppUrl, siteUrl } from "@/lib/site";
 import { absoluteUrl, productJsonLd, ratingSummary } from "@/lib/structured-data";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp";
-
-export async function generateStaticParams() {
-  const catalog = await getCatalog();
-  return catalog.products.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/products/[slug]">): Promise<Metadata> {
   const { locale } = await getI18n();

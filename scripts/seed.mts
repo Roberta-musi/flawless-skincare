@@ -1,32 +1,40 @@
-import { readFile } from "node:fs/promises";
-import { drizzle } from "drizzle-orm/d1";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import sharp from "sharp";
-import { getPlatformProxy } from "wrangler";
 import * as schema from "../lib/db/schema.ts";
 
 // Local demo data only. Names and prices come from the product labels and the old Wix
 // site; descriptions are placeholders for the client to replace. No reviews are seeded.
 
-if (!process.argv.includes("--local")) {
-  console.error("The demo seed only runs against the local database: npm run db:seed");
+if (process.env.DATABASE_PATH || process.env.MEDIA_DIR) {
+  console.error("The demo seed only runs against the local database in data/: unset DATABASE_PATH and MEDIA_DIR.");
   process.exit(1);
 }
 
 const photos = "docs/assets-to-upload";
 const widths = [400, 800, 1600] as const;
 
-const { env, dispose } = await getPlatformProxy<CloudflareEnv>();
-const db = drizzle(env.DB, { schema });
+const client = createClient({ url: "file:data/flawless.db" });
+await client.execute("PRAGMA foreign_keys = ON");
+const db = drizzle(client, { schema });
+
+async function put(key: string, body: Buffer) {
+  const file = join("data/media", key);
+  await mkdir(dirname(file), { recursive: true });
+  await writeFile(file, body);
+}
 
 async function upload(key: string, file: string) {
   const input = await readFile(`${photos}/${file}`);
   const meta = await sharp(input).rotate().metadata();
   for (const width of widths) {
     const body = await sharp(input).rotate().resize({ width, withoutEnlargement: false }).webp({ quality: 80 }).toBuffer();
-    await env.MEDIA.put(`${key}-${width}`, body, { httpMetadata: { contentType: "image/webp" } });
+    await put(`${key}-${width}`, body);
   }
   const og = await sharp(input).rotate().resize({ width: 1200, height: 630, fit: "cover" }).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
-  await env.MEDIA.put(`${key}-og`, og, { httpMetadata: { contentType: "image/jpeg" } });
+  await put(`${key}-og`, og);
   const w = meta.autoOrient?.width ?? meta.width ?? 1;
   const h = meta.autoOrient?.height ?? meta.height ?? 1;
   return { key, width: 1600, height: Math.round((h / w) * 1600) };
@@ -458,5 +466,5 @@ await db.insert(faqs).values([
   },
 ]);
 
-await dispose();
+client.close();
 console.log(`Seeded ${demo.length} products, 3 services and 5 FAQs into the local database.`);

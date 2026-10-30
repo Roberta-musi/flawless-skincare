@@ -18,6 +18,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+// Pages read the shop database, which only exists on the server, so render them per request.
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = {
   themeColor: "#fbf6f2",
 };

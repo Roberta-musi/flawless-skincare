@@ -6,7 +6,7 @@ import { resetTestDb } from "@/tests/support/db";
 const auth = vi.hoisted(() => ({ requireAdmin: vi.fn() }));
 const media = vi.hoisted(() => ({ delete: vi.fn() }));
 vi.mock("@/lib/auth", () => auth);
-vi.mock("@opennextjs/cloudflare", () => ({ getCloudflareContext: async () => ({ env: { MEDIA: media } }) }));
+vi.mock("@/lib/media/files", () => ({ deleteMediaFiles: media.delete }));
 
 const { deleteService, getServiceForEdit, saveService } = await import("./services");
 

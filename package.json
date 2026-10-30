@@ -12,16 +12,14 @@
     "check": "npm run lint && npm run typecheck && npm test",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply DB --local",
-    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
-    "db:seed": "node scripts/seed.mts --local",
+    "db:migrate": "node scripts/migrate.cjs",
+    "db:seed": "node scripts/seed.mts",
     "admin:create": "node scripts/create-admin.mts",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "node scripts/deploy.mts",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "backup": "node scripts/backup.cjs"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "^1.20.6",
+    "@libsql/client": "^0.18.0",
     "better-auth": "^1.7.6",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.3",
@@ -37,7 +35,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@libsql/client": "^0.18.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.4",
@@ -49,7 +46,6 @@
     "sharp": "^0.35.4",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^5.0.2",
-    "wrangler": "^4.141.0"
+    "vitest": "^5.0.2"
   }
 }

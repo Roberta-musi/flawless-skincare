@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--", "--port", "3100"],
       "port": 3100
+    },
+    {
+      "name": "flawless-bundle",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file=.env.local", "--env-file=.env.bundle.local", "deploy/app.js"],
+      "port": 3200
     }
   ]
 }

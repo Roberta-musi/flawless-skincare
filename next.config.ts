@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const localizedSections = [
   "shop",
@@ -16,10 +15,11 @@ const localizedSections = [
 ];
 
 const nextConfig: NextConfig = {
+  // A self-contained server.js plus only the node_modules it needs, for the cPanel Node.js app.
+  output: "standalone",
+  serverExternalPackages: ["@libsql/client", "libsql"],
   experimental: {
     globalNotFound: true,
-    // Each build worker opens its own local D1 simulator; several at once collide on the same SQLite file.
-    cpus: 1,
   },
   images: {
     loader: "custom",
@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     // English lives at unprefixed URLs; everything under app/[locale] expects a locale segment.
-    // One rule per section: OpenNext cannot rewrite a single regex parameter that spans several segments.
     return {
       beforeFiles: [],
       afterFiles: [
@@ -52,5 +51,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-initOpenNextCloudflareForDev();
