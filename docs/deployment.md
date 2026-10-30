@@ -39,7 +39,6 @@ Under **Environment variables**, add:
 
 | Name | Value |
 |---|---|
-| `BETTER_AUTH_SECRET` | A new random value of 64 characters, e.g. from `openssl rand -hex 32`. Don't reuse the one in `.env.local` |
 | `RESEND_API_KEY` | From Resend → API keys |
 | `EMAIL_FROM` | e.g. `Flawless Skin Care <notifications@flawless-skincare.com>` |
 | `NOTIFY_EMAIL` | The inbox that receives booking, review and message alerts |
@@ -47,7 +46,9 @@ Under **Environment variables**, add:
 
 Save. Don't press **Run NPM Install**: the uploaded bundle already contains everything it needs.
 
-`DATABASE_PATH` and `MEDIA_DIR` are optional; they default to the `~/flawless-data` paths above.
+`DATABASE_PATH` and `MEDIA_DIR` are optional; they default to the `~/flawless-data` paths above. So is `BETTER_AUTH_SECRET`: without it, `app.js` creates a random one on first start and keeps it in `~/flawless-data/.auth-secret`. Deleting that file signs everyone out of the admin panel.
+
+The domain's web folder, `public_html`, must not contain an `index.html`: the web server would serve it instead of the site. The old "under maintenance" page is kept there as `index.html.bak`.
 
 ## 3. Prepare the starting data
 
@@ -104,14 +105,14 @@ After this, the owner's edits in the admin panel update the site immediately. A 
 
 ## 6. Use one address
 
-In cPanel → **Domains**, turn on **Force HTTPS Redirect** for `flawless-skincare.com`. Search engines should only see `https://flawless-skincare.com`; if `www.` also loads the site, add a redirect from `www.flawless-skincare.com` to it under **Redirects**.
+**Force HTTPS Redirect** is on for `flawless-skincare.com` (cPanel → **Domains**). Search engines should only see `https://flawless-skincare.com`; if `www.` also loads the site, add a redirect from `www.flawless-skincare.com` to it under **Redirects**.
 
 ## 7. Turn on the weekly backup
 
-In cPanel → **Cron Jobs**, add a job that runs once a week (e.g. **Once Per Week**) with this command. The path to `node` is the one shown at the top of the Node.js app page, in the "Enter to the virtual environment" line; `20` is the Node.js version.
+This is set up: cPanel → **Cron Jobs** runs this every Monday at 02:00 (server time). The path to `node` is the one shown at the top of the Node.js app page, in the "Enter to the virtual environment" line; change the `20` if the app's Node.js version changes.
 
 ```bash
-/home/musirobe/nodevenv/flawlessskincarewebsite/20/bin/node /home/musirobe/flawlessskincarewebsite/scripts/backup.cjs
+/home/musirobe/nodevenv/flawlessskincarewebsite/20/bin/node /home/musirobe/flawlessskincarewebsite/scripts/backup.cjs >> /home/musirobe/flawless-data/backup.log 2>&1
 ```
 
 It saves `~/flawless-data/backups/flawless-YYYY-MM-DD.db` and deletes copies older than 90 days. Photos are covered by the hosting plan's own backups (cPanel → **Backup**); download a full backup every few months as well.

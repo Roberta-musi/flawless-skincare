@@ -1,6 +1,6 @@
 import { execFileSync, execSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { cpSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
+import { join, relative } from "node:path";
 
 // Builds deploy.zip for the cPanel Node.js app. With DEPLOY_SSH set in .env.deploy it also
 // uploads the bundle, unpacks it into DEPLOY_PATH and restarts the app.
@@ -32,6 +32,21 @@ mkdirSync(join(out, "scripts"));
 cpSync("scripts/migrate.cjs", join(out, "scripts/migrate.cjs"));
 cpSync("scripts/backup.cjs", join(out, "scripts/backup.cjs"));
 cpSync("scripts/cpanel-app.cjs", join(out, "app.js"));
+
+// Turbopack links server-external packages under hashed names (.next/node_modules/@libsql/client-<hash>)
+// to absolute paths on this computer. Swap each link for a stub that loads the bundled copy instead.
+const hashedDir = join(out, ".next/node_modules");
+const packageDirs = (dir: string): string[] =>
+  readdirSync(dir).flatMap((name) => (name.startsWith("@") ? packageDirs(join(dir, name)) : [join(dir, name)]));
+for (const link of existsSync(hashedDir) ? packageDirs(hashedDir) : []) {
+  if (!lstatSync(link).isSymbolicLink()) continue;
+  const target = readlinkSync(link).replace(/\\/g, "/").replace(/\/$/, "");
+  const name = target.slice(target.lastIndexOf("node_modules/") + "node_modules/".length);
+  rmSync(link, { recursive: true, force: true });
+  mkdirSync(link);
+  writeFileSync(join(link, "package.json"), JSON.stringify({ name: relative(hashedDir, link).replace(/\\/g, "/"), main: "index.js" }));
+  writeFileSync(join(link, "index.js"), `module.exports = require(${JSON.stringify(name)});\n`);
+}
 // Secrets are set on the server, never shipped in the bundle.
 for (const file of readdirSync(out)) if (file.startsWith(".env")) rmSync(join(out, file));
 
